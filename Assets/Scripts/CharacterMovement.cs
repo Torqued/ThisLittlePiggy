@@ -3,11 +3,12 @@ using System.Collections;
 
 [System.Serializable]
 public class KeySettings {
-    public KeyCode forward;
-    public KeyCode back;
-    public KeyCode left;
-    public KeyCode right;
-    public KeyCode interact;
+    public KeyCode forward = KeyCode.W;
+    public KeyCode back = KeyCode.S;
+	public KeyCode left = KeyCode.A;
+    public KeyCode right = KeyCode.D;
+    public KeyCode interact = KeyCode.F;
+	public KeyCode guiMode = KeyCode.Escape;
 }
 
 [System.Serializable]
@@ -150,22 +151,38 @@ public class CharacterMovement : MonoBehaviour {
         // Zeno's Paradox (creates smooth zooming)
         cameraZoom = Mathf.Lerp(cameraZoom, nextCameraZoom, 0.2f);
 
-        Vector3 cameraPosition;// = transform.position + cameraOffset * cameraZoom;
+        Vector3 cameraPosition;
 
         RaycastHit collisionInfo;
         if (Physics.Raycast(transform.position, cameraOffset, out collisionInfo)) {
+			Vector3 collisionOffset = Vector3.zero;
+			if (Vector3.Dot (collisionInfo.normal, Vector3.up) > 0) {
+				collisionOffset = Vector3.up;
+			}
             if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-                cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance);
+                cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
             }
             else {
-                cameraPosition = transform.position + cameraOffset * cameraZoom;
+				cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
             }
-        }
+		}
+		else if (Physics.Raycast (transform.position, cameraOffset + Vector3.up, out collisionInfo)) {
+			Vector3 collisionOffset = Vector3.zero;
+			if (Vector3.Dot (collisionInfo.normal, Vector3.up) > 0) {
+				collisionOffset = Vector3.up;
+			}
+			if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
+				cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+			}
+			else {
+				cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+			}
+		}
         else {
-            cameraPosition = transform.position + cameraOffset * cameraZoom;
+			cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
         }
 
-        mainCamera.transform.position = cameraPosition + Vector3.up;
+        mainCamera.transform.position = cameraPosition;
 
         Debug.DrawRay(transform.position, transform.forward * 10, Color.yellow);
         Debug.DrawRay(transform.position, mainCamera.transform.position - transform.position, Color.red);
