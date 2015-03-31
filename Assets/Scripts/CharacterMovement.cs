@@ -1,43 +1,65 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+#region Serializable Classes
 [System.Serializable]
 public class KeySettings {
     public KeyCode forward = KeyCode.W;
     public KeyCode back = KeyCode.S;
-	public KeyCode left = KeyCode.A;
+    public KeyCode left = KeyCode.A;
     public KeyCode right = KeyCode.D;
     public KeyCode interact = KeyCode.F;
-	public KeyCode guiMode = KeyCode.Escape;
+    public KeyCode guiMode = KeyCode.Escape;
 }
 
 [System.Serializable]
 public class CameraSettings {
     public Vector2 defaultCameraOffset;
+    public float cameraLookHeightOffset;
     public float minPitch, maxPitch;
     public float minZoom, maxZoom;
     public float sensitivity;
 }
+#endregion
 
 public class CharacterMovement : MonoBehaviour {
+
+    #region Serializable Fields
     public float moveSpeed;
     public KeySettings keySettings;
     public CameraSettings cameraSettings;
+    #endregion
+
+    #region Private Instance Variables
     private GameObject mainCamera;
+    private GameObject characterModel;
     private Rigidbody rigidBody;
+    private bool cameraLocked;
     private bool forward, wasForward;
     private bool backward, wasBackward;
     private bool strafeLeft, wasLeft;
     private bool strafeRight, wasRight;
+
     private float yaw, pitch, cameraZoom, nextCameraZoom;
+    #endregion
 
     void Start() {
         GameObject[] mainCameras = GameObject.FindGameObjectsWithTag("MainCamera");
+
         if (mainCameras.Length != 1) {
-            Debug.LogError("Make sure this scene has only 1 object tagged \"MainCamera\"");
+            Debug.LogError("Make sure this scene has only 1 object tagged \"MainCamera\".");
             Debug.Break();
         }
+        
         mainCamera = mainCameras [0];
+
+        Transform modelTransform = transform.Find("Model");
+        if (modelTransform == null) {
+            Debug.LogError("This object is missing a child object called \"Model\".");
+            Debug.Break();
+        }
+
+        characterModel = modelTransform.gameObject;
 
         if ((rigidBody = GetComponent<Rigidbody>()) == null) {
             Debug.LogError("There is no rigidbody attached to " + gameObject + ".");
@@ -48,8 +70,10 @@ public class CharacterMovement : MonoBehaviour {
         pitch = transform.localEulerAngles.x;
 
         cameraZoom = nextCameraZoom = 1;
+        cameraLocked = false;
     }
 
+    #region Player Movement
     void FixedUpdate() {
         Vector3 nextVelocity = new Vector3();
 
@@ -71,13 +95,14 @@ public class CharacterMovement : MonoBehaviour {
 
         rigidBody.velocity = new Vector3(nextVelocity.x, rigidBody.velocity.y, nextVelocity.z);
     }
+    #endregion
 
     void Update() {
         checkKeyInputs();
         checkMouseInputs();
-        updateAnimations();
     }
 
+    #region Keyboard Inputs
     private void checkKeyInputs() {
         if (Input.GetKeyDown(keySettings.forward)) {
             forward = wasForward = !(backward = false);
@@ -107,80 +132,83 @@ public class CharacterMovement : MonoBehaviour {
             strafeRight = wasRight = false;
             strafeLeft = wasLeft;
         }
+
+        if (Input.GetKeyDown(keySettings.guiMode)) {
+            cameraLocked = !cameraLocked;
+
+            if (cameraLocked) {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            Cursor.visible = cameraLocked;
+        }
     }
+    #endregion
 
+    #region Mouse Inputs
     private void checkMouseInputs() {
-        float h = Input.GetAxis("Mouse X") * cameraSettings.sensitivity;
-        float v = Input.GetAxis("Mouse Y") * cameraSettings.sensitivity;
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (!cameraLocked) {
+            float h = Input.GetAxis("Mouse X") * cameraSettings.sensitivity;
+            float v = Input.GetAxis("Mouse Y") * cameraSettings.sensitivity;
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        yaw += h;
-        pitch = Mathf.Clamp(pitch - v, cameraSettings.minPitch, cameraSettings.maxPitch);
+            yaw += h;
+            pitch = Mathf.Clamp(pitch - v, cameraSettings.minPitch, cameraSettings.maxPitch);
 
-        transform.localEulerAngles = new Vector3(pitch, yaw, 0);
-
-        nextCameraZoom = Mathf.Clamp(
+            nextCameraZoom = Mathf.Clamp(
                 nextCameraZoom - scroll * 0.5f,
                 cameraSettings.minZoom,
                 cameraSettings.maxZoom);
-    }
-
-    private void updateAnimations() {
-        Renderer temp = GetComponent<MeshRenderer>();
-        if (strafeLeft) {
-            temp.material.color = Color.blue;
-        }
-        else if (strafeRight) {
-            temp.material.color = Color.yellow;
-        }
-        else if (forward) {
-            temp.material.color = Color.green;
-        }
-        else if (backward) {
-            temp.material.color = Color.red;
         }
         else {
-            temp.material.color = Color.white;
+
         }
+        
+        transform.localEulerAngles = new Vector3(pitch, yaw, 0);
     }
+    #endregion
         
     void LateUpdate() {
-        Vector3 cameraOffset = transform.forward * cameraSettings.defaultCameraOffset.x +
-            Vector3.up * cameraSettings.defaultCameraOffset.y;
+        Vector3 cameraOffset = Vector3.up * cameraSettings.defaultCameraOffset.y +
+            transform.forward * cameraSettings.defaultCameraOffset.x;
 
         // Zeno's Paradox (creates smooth zooming)
         cameraZoom = Mathf.Lerp(cameraZoom, nextCameraZoom, 0.2f);
 
         Vector3 cameraPosition;
 
+        #region Camera Collision
         RaycastHit collisionInfo;
         if (Physics.Raycast(transform.position, cameraOffset, out collisionInfo)) {
-			Vector3 collisionOffset = Vector3.zero;
-			if (Vector3.Dot (collisionInfo.normal, Vector3.up) > 0) {
-				collisionOffset = Vector3.up;
-			}
+            Vector3 collisionOffset = Vector3.zero;
+            if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
+                collisionOffset = Vector3.up;
+            }
             if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
                 cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
             }
             else {
-				cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+                cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
             }
-		}
-		else if (Physics.Raycast (transform.position, cameraOffset + Vector3.up, out collisionInfo)) {
-			Vector3 collisionOffset = Vector3.zero;
-			if (Vector3.Dot (collisionInfo.normal, Vector3.up) > 0) {
-				collisionOffset = Vector3.up;
-			}
-			if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-				cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
-			}
-			else {
-				cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
-			}
-		}
-        else {
-			cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
         }
+        else if (Physics.Raycast(transform.position, cameraOffset + Vector3.up, out collisionInfo)) {
+            Vector3 collisionOffset = Vector3.zero;
+            if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
+                collisionOffset = Vector3.up;
+            }
+            if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
+                cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+            }
+            else {
+                cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+            }
+        }
+        else {
+            cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
+        }
+        #endregion
 
         mainCamera.transform.position = cameraPosition;
 
@@ -190,6 +218,26 @@ public class CharacterMovement : MonoBehaviour {
         // Force pitch to 0 so that the player doesn't bend up or down
         transform.localEulerAngles = new Vector3(0, yaw, 0);
 
-        mainCamera.transform.LookAt(transform.position + Vector3.up);
+        mainCamera.transform.LookAt(transform.position + cameraSettings.cameraLookHeightOffset*Vector3.up);
+
+        updateAnimations();
+    }
+
+    private void updateAnimations() {
+        if (forward) {
+            characterModel.transform.localEulerAngles = new Vector3(0, 0, 0);
+        }
+        else if (backward) {
+            characterModel.transform.localEulerAngles = new Vector3(0, 180, 0);
+        }
+        else if (strafeLeft) {
+            characterModel.transform.localEulerAngles = new Vector3(0, -90, 0);
+        }
+        else if (strafeRight) {
+            characterModel.transform.localEulerAngles = new Vector3(0, 90, 0);
+        }
+        else {
+
+        }
     }
 }
