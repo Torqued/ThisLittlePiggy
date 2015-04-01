@@ -102,6 +102,11 @@ public class CharacterMovement : MonoBehaviour {
         checkMouseInputs();
     }
 
+
+	void OnApplicationFocus(bool focus) {
+		forward = wasForward = backward = wasBackward = strafeLeft = wasLeft = strafeRight = wasRight = false;
+	}
+
     #region Keyboard Inputs
     private void checkKeyInputs() {
         if (Input.GetKeyDown(keySettings.forward)) {
