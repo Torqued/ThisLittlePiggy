@@ -1,0 +1,318 @@
+fileFormatVersion: 2
+guid: ca72f52e744c6ec49aef820fb315611d
+timeCreated: 1427910111
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Armature
+    100002: BottomEarL
+    100004: BottomEarR
+    100006: Chest
+    100008: Cube
+    100010: EyeL
+    100012: EyeR
+    100014: FootL
+    100016: FootR
+    100018: Head
+    100020: Hip
+    100022: IKL
+    100024: IKR
+    100026: KneeL
+    100028: KneeR
+    100030: LowerArmL
+    100032: LowerArmR
+    100034: Neck
+    100036: Pig_Body
+    100038: //RootNode
+    100040: ShinL
+    100042: ShinR
+    100044: ShoulderR
+    100046: ShoulderR_001
+    100048: Snout
+    100050: ThighL
+    100052: ThighR
+    100054: Tum
+    100056: UpperArmL
+    100058: UpperArmR
+    100060: UpperEarL
+    100062: UpperEarR
+    400000: Armature
+    400002: BottomEarL
+    400004: BottomEarR
+    400006: Chest
+    400008: Cube
+    400010: EyeL
+    400012: EyeR
+    400014: FootL
+    400016: FootR
+    400018: Head
+    400020: Hip
+    400022: IKL
+    400024: IKR
+    400026: KneeL
+    400028: KneeR
+    400030: LowerArmL
+    400032: LowerArmR
+    400034: Neck
+    400036: Pig_Body
+    400038: //RootNode
+    400040: ShinL
+    400042: ShinR
+    400044: ShoulderR
+    400046: ShoulderR_001
+    400048: Snout
+    400050: ThighL
+    400052: ThighR
+    400054: Tum
+    400056: UpperArmL
+    400058: UpperArmR
+    400060: UpperEarL
+    400062: UpperEarR
+    2300000: Cube
+    3300000: Cube
+    4300000: Pig_Body
+    4300002: Cube
+    7400000: Default Take
+    7400002: Running
+    7400004: Idle1
+    9500000: //RootNode
+    13700000: Pig_Body
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Idle1
+      takeName: ArmatureAction
+      firstFrame: 35
+      lastFrame: 65
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Hip
+        weight: 1
+      - path: Armature/Hip/ThighL
+        weight: 1
+      - path: Armature/Hip/ThighL/ShinL
+        weight: 1
+      - path: Armature/Hip/ThighL/ShinL/FootL
+        weight: 1
+      - path: Armature/Hip/ThighR
+        weight: 1
+      - path: Armature/Hip/ThighR/ShinR
+        weight: 1
+      - path: Armature/Hip/ThighR/ShinR/FootR
+        weight: 1
+      - path: Armature/Hip/Tum
+        weight: 1
+      - path: Armature/Hip/Tum/Chest
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarL/UpperEarL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarR/UpperEarR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/EyeL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/EyeR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/Snout
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR/LowerArmR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR/LowerArmR/UpperArmR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR_001
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR_001/LowerArmL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR_001/LowerArmL/UpperArmL
+        weight: 1
+      - path: Armature/IKL
+        weight: 1
+      - path: Armature/IKR
+        weight: 1
+      - path: Armature/KneeL
+        weight: 1
+      - path: Armature/KneeR
+        weight: 1
+      - path: Cube
+        weight: 1
+      - path: Pig_Body
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Running
+      takeName: ArmatureAction
+      firstFrame: 74
+      lastFrame: 89
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Hip
+        weight: 1
+      - path: Armature/Hip/ThighL
+        weight: 1
+      - path: Armature/Hip/ThighL/ShinL
+        weight: 1
+      - path: Armature/Hip/ThighL/ShinL/FootL
+        weight: 1
+      - path: Armature/Hip/ThighR
+        weight: 1
+      - path: Armature/Hip/ThighR/ShinR
+        weight: 1
+      - path: Armature/Hip/ThighR/ShinR/FootR
+        weight: 1
+      - path: Armature/Hip/Tum
+        weight: 1
+      - path: Armature/Hip/Tum/Chest
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarL/UpperEarL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/BottomEarR/UpperEarR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/EyeL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/EyeR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/Neck/Head/Snout
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR/LowerArmR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR/LowerArmR/UpperArmR
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR_001
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR_001/LowerArmL
+        weight: 1
+      - path: Armature/Hip/Tum/Chest/ShoulderR_001/LowerArmL/UpperArmL
+        weight: 1
+      - path: Armature/IKL
+        weight: 1
+      - path: Armature/IKR
+        weight: 1
+      - path: Armature/KneeL
+        weight: 1
+      - path: Armature/KneeR
+        weight: 1
+      - path: Cube
+        weight: 1
+      - path: Pig_Body
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
