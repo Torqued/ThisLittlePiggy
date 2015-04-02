@@ -43,6 +43,8 @@ public class CharacterMovement : MonoBehaviour {
     private float yaw, pitch, cameraZoom, nextCameraZoom;
     #endregion
 
+	private Vector3 startPos = new Vector3(41,18,216); //JORDAN'S EDIT DONT CHANGE
+
     void Start() {
         GameObject[] mainCameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
@@ -137,6 +139,15 @@ public class CharacterMovement : MonoBehaviour {
             strafeRight = wasRight = false;
             strafeLeft = wasLeft;
         }
+		else if (Input.GetKey (KeyCode.LeftShift)){
+			Vector3 switchPos = startPos;
+			if(startPos.x == 41){
+				startPos=new Vector3(111,152,-1828);
+			}else{
+				startPos=new Vector3(41,18,216);
+			}
+			transform.position=switchPos;
+		}
 
         if (Input.GetKeyDown(keySettings.guiMode)) {
             cameraLocked = !cameraLocked;
