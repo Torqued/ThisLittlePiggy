@@ -19,32 +19,4 @@ public class Inventory : MonoBehaviour {
 	
 	}
 
-	void OnCollisionEnter(Collision other)
-	{
-		GameObject g = other.collider.gameObject;
-		if (g.tag == "Item") {
-			if(g.GetComponent<Item>().itemType == "Brick")
-			{
-				brick ++;
-				Destroy(g);
-			}
-			else if(g.GetComponent<Item>().itemType == "Grass")
-			{
-				grass++;
-				Destroy(g);
-			}
-			else if(g.GetComponent<Item>().itemType == "Straw")
-			{
-				straw++;
-				Destroy(g);
-			}
-			else if(g.GetComponent<Item>().itemType == "Stick")
-			{
-				stick++;
-				Destroy(g);
-			}
-
-			
-		}
-	}
 }
