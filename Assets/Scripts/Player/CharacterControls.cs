@@ -9,7 +9,8 @@ public class KeySettings {
     public KeyCode left = KeyCode.A;
     public KeyCode right = KeyCode.D;
     public KeyCode interact = KeyCode.F;
-    public KeyCode guiMode = KeyCode.Escape;
+	public KeyCode guiMode = KeyCode.Tab;
+	public KeyCode pause = KeyCode.Escape;
 }
 
 [System.Serializable]
@@ -22,7 +23,7 @@ public class CameraSettings {
 }
 #endregion
 
-public class CharacterMovement : MonoBehaviour {
+public class CharacterControls : MonoBehaviour {
 
     #region Serializable Fields
     public float moveSpeed;
@@ -30,10 +31,15 @@ public class CharacterMovement : MonoBehaviour {
     public CameraSettings cameraSettings;
     #endregion
 
-    #region Private Instance Variables
+	#region Private Instance Variables
+	private Animator characterAnimator;
+	private CharacterInventory inventory;
     private GameObject mainCamera;
-    private GameObject characterModel;
-    private Rigidbody rigidBody;
+	private GameObject characterModel;
+	private GameObject gameController;
+	private Item currentItem;
+	private PlayerHashIds hash;
+	private Rigidbody rigidBody;
     private bool cameraLocked;
     private bool forward, wasForward;
     private bool backward, wasBackward;
@@ -42,14 +48,6 @@ public class CharacterMovement : MonoBehaviour {
 
     private float yaw, pitch, cameraZoom, nextCameraZoom;
     #endregion
-
-    #region Animation and Global Data Variables
-    private HashIDs hash;
-    private GameObject gameController;
-    private Animator characterAnimator;
-    #endregion
-
-	private Vector3 startPos = new Vector3(41,18,216); //JORDAN'S EDIT DONT CHANGE
 
     void Start() {
         GameObject[] mainCameras = GameObject.FindGameObjectsWithTag("MainCamera");
@@ -73,6 +71,11 @@ public class CharacterMovement : MonoBehaviour {
             Debug.LogError("There is no rigidbody attached to " + gameObject + ".");
             Debug.Break();
         }
+		
+		if ((inventory = GetComponent<CharacterInventory>()) == null) {
+			Debug.LogError("There is no CharacterInventory script attached to " + gameObject + ".");
+			Debug.Break();
+		}
 
         yaw = transform.localEulerAngles.y;
         pitch = transform.localEulerAngles.x;
@@ -80,9 +83,8 @@ public class CharacterMovement : MonoBehaviour {
         cameraZoom = nextCameraZoom = 1;
         cameraLocked = false;
 
-		//Animation Vars
-		gameController = GameObject.FindGameObjectWithTag("GameController");
-		hash = gameController.GetComponent<HashIDs>();
+		//Animation
+		hash = characterModel.GetComponent<PlayerHashIds>();
 		characterAnimator = characterModel.GetComponent<Animator>();
     }
 
@@ -114,7 +116,6 @@ public class CharacterMovement : MonoBehaviour {
         checkKeyInputs();
         checkMouseInputs();
     }
-
 
 	void OnApplicationFocus(bool focus) {
 		forward = wasForward = backward = wasBackward = strafeLeft = wasLeft = strafeRight = wasRight = false;
@@ -150,15 +151,6 @@ public class CharacterMovement : MonoBehaviour {
             strafeRight = wasRight = false;
             strafeLeft = wasLeft;
         }
-		else if (Input.GetKey (KeyCode.LeftShift)){
-			Vector3 switchPos = startPos;
-			if(startPos.x == 41){
-				startPos=new Vector3(111,152,-1828);
-			}else{
-				startPos=new Vector3(41,18,216);
-			}
-			transform.position=switchPos;
-		}
 
         if (Input.GetKeyDown(keySettings.guiMode)) {
             cameraLocked = !cameraLocked;
@@ -171,6 +163,13 @@ public class CharacterMovement : MonoBehaviour {
             }
             Cursor.visible = cameraLocked;
         }
+
+		if (Input.GetKeyDown(keySettings.interact)) {
+			if (currentItem != null) {
+				inventory.addItem(currentItem.itemType);
+				GameObject.Destroy(currentItem.gameObject);
+			}
+		}
     }
     #endregion
 
@@ -271,4 +270,8 @@ public class CharacterMovement : MonoBehaviour {
 			characterAnimator.SetBool(hash.runningBool, false);
         }
     }
+
+	public void setCurrentItem(Item item) {
+		currentItem = item;
+	}
 }

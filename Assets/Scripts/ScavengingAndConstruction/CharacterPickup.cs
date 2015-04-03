@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class CharacterPickup : MonoBehaviour {
-
+	/*
 	GameObject controller;
 	Inventory inventory;
 	void Start () {
@@ -39,4 +39,5 @@ public class CharacterPickup : MonoBehaviour {
 			
 		}
 	}
+	*/
 }
