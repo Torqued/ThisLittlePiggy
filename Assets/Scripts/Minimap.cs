@@ -5,7 +5,7 @@ public class Minimap : MonoBehaviour {
 
     #region Serializable Fields
     public Vector2 cameraPosition;
-    public float cameraSize;
+    public float mapSize;
     #endregion
 
     #region Private Instance Variables
@@ -28,7 +28,6 @@ public class Minimap : MonoBehaviour {
         }
 
         recalculateMinimapSize();
-
         #endregion
 
         player = players[0];
@@ -49,7 +48,7 @@ public class Minimap : MonoBehaviour {
         mapCamera.clearFlags = CameraClearFlags.SolidColor;
         
         float screenAspect = 1.0f * Screen.width / Screen.height;
-        float height = cameraSize;
+        float height = mapSize;
         float width = height / screenAspect;
         mapCamera.rect = new Rect(1 - cameraPosition.x / screenAspect, 1-cameraPosition.y, width, height);
     }

@@ -14,10 +14,10 @@ public enum Crafting {
 
 public static class CraftingRecipes {
 
-    private static Dictionary<Crafting, CraftingRecipe> crafting;
+    private static Dictionary<Crafting, ICraftingRecipe> crafting;
 
     static CraftingRecipes() {
-        crafting = new Dictionary<Crafting, CraftingRecipe>();
+        crafting = new Dictionary<Crafting, ICraftingRecipe>();
 
         crafting[Crafting.HouseBricks] = new RecipeHouseBricks();
         crafting[Crafting.HouseSticks] = new RecipeHouseSticks();
@@ -26,11 +26,11 @@ public static class CraftingRecipes {
         crafting[Crafting.Rope] = new RecipeRope();
     }
 
-    public static bool canCraft(Crafting craft, Inventory i) {
+    public static bool canCraft(Crafting craft, CharacterInventory i) {
         return crafting[craft].canCraft(i);
     }
 
-    public static bool craft(Crafting craft, Inventory i) {
+    public static bool craft(Crafting craft, CharacterInventory i) {
         if (canCraft(craft, i)) {
             crafting[craft].craftingResult(i);
             return true;
@@ -38,60 +38,66 @@ public static class CraftingRecipes {
         return false;
     }
     
-    private abstract class CraftingRecipe {
-        public abstract bool canCraft(Inventory i);
-
-        public abstract void craftingResult(Inventory i);
+    private interface ICraftingRecipe {
+        bool canCraft(CharacterInventory i);
+        void craftingResult(CharacterInventory i);
     }
 
     #region Recipe Definitions
-    private class RecipeHouseBricks : CraftingRecipe {
-        override public bool canCraft(Inventory i) {
+    private class RecipeHouseBricks : ICraftingRecipe {
+        public bool canCraft(CharacterInventory i) {
             return true;
         }
         
-        override public void craftingResult(Inventory i) {
+        public void craftingResult(CharacterInventory i) {
             
         }
     }
     
-    private class RecipeHouseSticks : CraftingRecipe {
-        override public bool canCraft(Inventory i) {
+    private class RecipeHouseSticks : ICraftingRecipe {
+        public bool canCraft(CharacterInventory i) {
             return true;
         }
         
-        override public void craftingResult(Inventory i) {
+        public void craftingResult(CharacterInventory i) {
             
         }
     }
 
-    private class RecipeHouseStraw : CraftingRecipe {
-        override public bool canCraft(Inventory i) {
-            return true;
+    private class RecipeHouseStraw : ICraftingRecipe {
+        public bool canCraft(CharacterInventory i) {
+            return i.getAmount(ItemType.Straw) >= 5 && i.getAmount(ItemType.Rope) >= 2;
         }
         
-        override public void craftingResult(Inventory i) {
-            
+        public void craftingResult(CharacterInventory i) {
+            i.removeItem(ItemType.Straw, 5);
+            i.removeItem(ItemType.Rope, 2);
+
+            GameObject player = i.gameObject;
+            Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+                player.transform.position;
+            Object.Instantiate(Resources.Load("SpawnPrefabs/StrawHouse"), position, Quaternion.identity);
         }
     }
 
-    private class RecipeHouseWood : CraftingRecipe {
-        override public bool canCraft(Inventory i) {
+    private class RecipeHouseWood : ICraftingRecipe {
+        public bool canCraft(CharacterInventory i) {
             return true;
         }
         
-        override public void craftingResult(Inventory i) {
+        public void craftingResult(CharacterInventory i) {
             
         }
     }
     
-    private class RecipeRope : CraftingRecipe {
-        override public bool canCraft(Inventory i) {
-            return true;
+    private class RecipeRope : ICraftingRecipe {
+        public bool canCraft(CharacterInventory i) {
+            return i.getAmount(ItemType.Grass) >= 2;
         }
         
-        override public void craftingResult(Inventory i) {
-            
+        public void craftingResult(CharacterInventory i) {
+            i.removeItem(ItemType.Grass, 2);
+            i.addItem(ItemType.Rope);
         }
     }
     #endregion

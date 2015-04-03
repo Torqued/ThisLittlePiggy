@@ -9,8 +9,8 @@ public class KeySettings {
     public KeyCode left = KeyCode.A;
     public KeyCode right = KeyCode.D;
     public KeyCode interact = KeyCode.F;
-	public KeyCode guiMode = KeyCode.Tab;
-	public KeyCode pause = KeyCode.Escape;
+    public KeyCode guiMode = KeyCode.Tab;
+    public KeyCode pause = KeyCode.Escape;
 }
 
 [System.Serializable]
@@ -31,21 +31,21 @@ public class CharacterControls : MonoBehaviour {
     public CameraSettings cameraSettings;
     #endregion
 
-	#region Private Instance Variables
-	private Animator characterAnimator;
-	private CharacterInventory inventory;
+    #region Private Instance Variables
+    private Animator characterAnimator;
+    private CharacterInventory inventory;
     private GameObject mainCamera;
-	private GameObject characterModel;
-	private GameObject gameController;
-	private Item currentItem;
-	private PlayerHashIds hash;
-	private Rigidbody rigidBody;
+    private GameObject characterModel;
+    private GameObject gameController;
+    private Item currentItem;
+    private PlayerHashIds hash;
+    private Rigidbody rigidBody;
     private bool cameraLocked;
+    private bool gamePaused;
     private bool forward, wasForward;
     private bool backward, wasBackward;
     private bool strafeLeft, wasLeft;
     private bool strafeRight, wasRight;
-
     private float yaw, pitch, cameraZoom, nextCameraZoom;
     #endregion
 
@@ -57,7 +57,7 @@ public class CharacterControls : MonoBehaviour {
             Debug.Break();
         }
         
-        mainCamera = mainCameras [0];
+        mainCamera = mainCameras[0];
 
         Transform modelTransform = transform.Find("Model");
         if (modelTransform == null) {
@@ -71,11 +71,11 @@ public class CharacterControls : MonoBehaviour {
             Debug.LogError("There is no rigidbody attached to " + gameObject + ".");
             Debug.Break();
         }
-		
-		if ((inventory = GetComponent<CharacterInventory>()) == null) {
-			Debug.LogError("There is no CharacterInventory script attached to " + gameObject + ".");
-			Debug.Break();
-		}
+        
+        if ((inventory = GetComponent<CharacterInventory>()) == null) {
+            Debug.LogError("There is no CharacterInventory script attached to " + gameObject + ".");
+            Debug.Break();
+        }
 
         yaw = transform.localEulerAngles.y;
         pitch = transform.localEulerAngles.x;
@@ -83,9 +83,9 @@ public class CharacterControls : MonoBehaviour {
         cameraZoom = nextCameraZoom = 1;
         cameraLocked = false;
 
-		//Animation
-		hash = characterModel.GetComponent<PlayerHashIds>();
-		characterAnimator = characterModel.GetComponent<Animator>();
+        //Animation
+        hash = characterModel.GetComponent<PlayerHashIds>();
+        characterAnimator = characterModel.GetComponent<Animator>();
     }
 
     #region Player Movement
@@ -117,9 +117,9 @@ public class CharacterControls : MonoBehaviour {
         checkMouseInputs();
     }
 
-	void OnApplicationFocus(bool focus) {
-		forward = wasForward = backward = wasBackward = strafeLeft = wasLeft = strafeRight = wasRight = false;
-	}
+    void OnApplicationFocus(bool focus) {
+        forward = wasForward = backward = wasBackward = strafeLeft = wasLeft = strafeRight = wasRight = false;
+    }
 
     #region Keyboard Inputs
     private void checkKeyInputs() {
@@ -164,12 +164,16 @@ public class CharacterControls : MonoBehaviour {
             Cursor.visible = cameraLocked;
         }
 
-		if (Input.GetKeyDown(keySettings.interact)) {
-			if (currentItem != null) {
-				inventory.addItem(currentItem.itemType);
-				GameObject.Destroy(currentItem.gameObject);
-			}
-		}
+        if (Input.GetKeyDown(keySettings.pause)) {
+            gamePaused = !gamePaused;
+        }
+
+        if (Input.GetKeyDown(keySettings.interact)) {
+            if (currentItem != null) {
+                inventory.addItem(currentItem.itemType);
+                GameObject.Destroy(currentItem.gameObject);
+            }
+        }
     }
     #endregion
 
@@ -244,7 +248,7 @@ public class CharacterControls : MonoBehaviour {
         // Force pitch to 0 so that the player doesn't bend up or down
         transform.localEulerAngles = new Vector3(0, yaw, 0);
 
-        mainCamera.transform.LookAt(transform.position + cameraSettings.cameraLookHeightOffset*Vector3.up);
+        mainCamera.transform.LookAt(transform.position + cameraSettings.cameraLookHeightOffset * Vector3.up);
 
         updateAnimations();
     }
@@ -252,26 +256,26 @@ public class CharacterControls : MonoBehaviour {
     private void updateAnimations() {
         if (forward) {
             characterModel.transform.localEulerAngles = new Vector3(0, 0, 0);
-			characterAnimator.SetBool(hash.runningBool, true);
+            characterAnimator.SetBool(hash.runningBool, true);
         }
         else if (backward) {
             characterModel.transform.localEulerAngles = new Vector3(0, 180, 0);
-			characterAnimator.SetBool(hash.runningBool, true);
+            characterAnimator.SetBool(hash.runningBool, true);
         }
         else if (strafeLeft) {
             characterModel.transform.localEulerAngles = new Vector3(0, -90, 0);
-			characterAnimator.SetBool(hash.runningBool, true);
+            characterAnimator.SetBool(hash.runningBool, true);
         }
         else if (strafeRight) {
             characterModel.transform.localEulerAngles = new Vector3(0, 90, 0);
-			characterAnimator.SetBool(hash.runningBool, true);
+            characterAnimator.SetBool(hash.runningBool, true);
         }
         else {
-			characterAnimator.SetBool(hash.runningBool, false);
+            characterAnimator.SetBool(hash.runningBool, false);
         }
     }
 
-	public void setCurrentItem(Item item) {
-		currentItem = item;
-	}
+    public void setCurrentItem(Item item) {
+        currentItem = item;
+    }
 }
