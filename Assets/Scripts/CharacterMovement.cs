@@ -43,6 +43,12 @@ public class CharacterMovement : MonoBehaviour {
     private float yaw, pitch, cameraZoom, nextCameraZoom;
     #endregion
 
+    #region Animation and Global Data Variables
+    private HashIDs hash;
+    private GameObject gameController;
+    private Animator characterAnimator;
+    #endregion
+
 	private Vector3 startPos = new Vector3(41,18,216); //JORDAN'S EDIT DONT CHANGE
 
     void Start() {
@@ -73,6 +79,11 @@ public class CharacterMovement : MonoBehaviour {
 
         cameraZoom = nextCameraZoom = 1;
         cameraLocked = false;
+
+		//Animation Vars
+		gameController = GameObject.FindGameObjectWithTag("GameController");
+		hash = gameController.GetComponent<HashIDs>();
+		characterAnimator = characterModel.GetComponent<Animator>();
     }
 
     #region Player Movement
@@ -242,18 +253,22 @@ public class CharacterMovement : MonoBehaviour {
     private void updateAnimations() {
         if (forward) {
             characterModel.transform.localEulerAngles = new Vector3(0, 0, 0);
+			characterAnimator.SetBool(hash.runningBool, true);
         }
         else if (backward) {
             characterModel.transform.localEulerAngles = new Vector3(0, 180, 0);
+			characterAnimator.SetBool(hash.runningBool, true);
         }
         else if (strafeLeft) {
             characterModel.transform.localEulerAngles = new Vector3(0, -90, 0);
+			characterAnimator.SetBool(hash.runningBool, true);
         }
         else if (strafeRight) {
             characterModel.transform.localEulerAngles = new Vector3(0, 90, 0);
+			characterAnimator.SetBool(hash.runningBool, true);
         }
         else {
-
+			characterAnimator.SetBool(hash.runningBool, false);
         }
     }
 }
