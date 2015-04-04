@@ -38,7 +38,7 @@ public class CharacterControls : MonoBehaviour {
     private GameObject characterModel;
     private GameObject gameController;
     private Item currentItem;
-    private PlayerHashIds hash;
+    private HashIds hash;
     private Rigidbody rigidBody;
     private bool cameraLocked;
     private bool gamePaused;
@@ -53,11 +53,20 @@ public class CharacterControls : MonoBehaviour {
         GameObject[] mainCameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
         if (mainCameras.Length != 1) {
-            Debug.LogError("Make sure this scene has only 1 object tagged \"MainCamera\".");
+            Debug.LogError("Make sure this scene has exactly 1 object tagged \"MainCamera\".");
             Debug.Break();
         }
         
         mainCamera = mainCameras[0];
+        
+        
+        GameObject[] gameControllers = GameObject.FindGameObjectsWithTag("GameController");
+        if (gameControllers.Length != 1) {
+            Debug.LogError("Make sure this scene has exactly 1 object tagged \"MainCamera\".");
+            Debug.Break();
+        }
+
+        gameController = gameControllers[0];
 
         Transform modelTransform = transform.Find("Model");
         if (modelTransform == null) {
@@ -84,7 +93,7 @@ public class CharacterControls : MonoBehaviour {
         cameraLocked = false;
 
         //Animation
-        hash = characterModel.GetComponent<PlayerHashIds>();
+        hash = gameController.GetComponent<HashIds>();
         characterAnimator = characterModel.GetComponent<Animator>();
     }
 

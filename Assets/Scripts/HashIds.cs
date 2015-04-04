@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerHashIds : MonoBehaviour {
+public class HashIds : MonoBehaviour {
 	public int runningBool;
 
 	void Awake () {
