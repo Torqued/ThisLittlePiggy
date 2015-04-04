@@ -3,13 +3,16 @@ using System.Collections;
 
 public class DayNightCycle : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
 	void Update () {
-	
+        float lightAngle = Time.time * 3;
+        transform.eulerAngles = new Vector3(lightAngle, 0, 0);
 	}
+
+    public float timeOfDay() {
+        return Time.time * 3 % 360 / 360;
+    }
+
+    public bool isNightTime() {
+        return false;
+    }
 }

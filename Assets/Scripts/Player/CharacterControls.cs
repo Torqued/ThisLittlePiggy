@@ -47,6 +47,7 @@ public class CharacterControls : MonoBehaviour {
     private bool strafeLeft, wasLeft;
     private bool strafeRight, wasRight;
     private float yaw, pitch, cameraZoom, nextCameraZoom;
+    private float nextPlayerYaw;
     #endregion
 
     void Start() {
@@ -263,25 +264,37 @@ public class CharacterControls : MonoBehaviour {
     }
 
     private void updateAnimations() {
-        if (forward) {
-            characterModel.transform.localEulerAngles = new Vector3(0, 0, 0);
-            characterAnimator.SetBool(hash.runningBool, true);
+        characterAnimator.SetBool(hash.runningBool, forward || backward || strafeLeft || strafeRight);
+
+        #region Player Rotation
+        if (forward && !strafeLeft && !strafeRight) {
+            nextPlayerYaw = 0;
         }
-        else if (backward) {
-            characterModel.transform.localEulerAngles = new Vector3(0, 180, 0);
-            characterAnimator.SetBool(hash.runningBool, true);
+        else if (forward && strafeLeft) {
+            nextPlayerYaw = -45;
+        }
+        else if (forward && strafeRight) {
+            nextPlayerYaw = 45;
+        }
+        else if (backward && !strafeLeft && !strafeRight) {
+            nextPlayerYaw = 180;
+        }
+        else if (backward && strafeLeft) {
+            nextPlayerYaw = -135;
+        }
+        else if (backward && strafeRight) {
+            nextPlayerYaw = 135;
         }
         else if (strafeLeft) {
-            characterModel.transform.localEulerAngles = new Vector3(0, -90, 0);
-            characterAnimator.SetBool(hash.runningBool, true);
+            nextPlayerYaw = -90;
         }
         else if (strafeRight) {
-            characterModel.transform.localEulerAngles = new Vector3(0, 90, 0);
-            characterAnimator.SetBool(hash.runningBool, true);
+            nextPlayerYaw = 90;
         }
-        else {
-            characterAnimator.SetBool(hash.runningBool, false);
-        }
+
+        float playerYaw = Mathf.LerpAngle(characterModel.transform.localEulerAngles.y, nextPlayerYaw, 0.2f);
+        characterModel.transform.localEulerAngles = new Vector3(0, playerYaw, 0);
+        #endregion
     }
 
     public void setCurrentItem(Item item) {
