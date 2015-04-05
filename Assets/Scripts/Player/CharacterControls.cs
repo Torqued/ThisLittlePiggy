@@ -91,7 +91,8 @@ public class CharacterControls : MonoBehaviour {
         pitch = transform.localEulerAngles.x;
 
         cameraZoom = nextCameraZoom = 1;
-        cameraLocked = false;
+        Cursor.visible = cameraLocked = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         //Animation
         hash = gameController.GetComponent<HashIds>();

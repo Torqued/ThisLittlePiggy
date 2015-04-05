@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 using System.Collections;
 
 public class meshCombine : MonoBehaviour {
@@ -34,8 +34,8 @@ public class meshCombine : MonoBehaviour {
 			combinedMesh.GetComponent<MeshFilter>().sharedMesh.CombineMeshes(combine);
 
 			Mesh m1 = combinedMesh.GetComponent<MeshFilter>().mesh;
-			AssetDatabase.CreateAsset(m1, "Assets/pine.asset"); // saves to "assets/"
-			AssetDatabase.SaveAssets();
+			//AssetDatabase.CreateAsset(m1, "Assets/pine.asset"); // saves to "assets/"
+			//AssetDatabase.SaveAssets();
 			
 			//Object prefab = PrefabUtility.CreateEmptyPrefab( "Assets/" + "CombinedMesh" + ".prefab");
 			//PrefabUtility.ReplacePrefab(combinedMesh, prefab, ReplacePrefabOptions.ConnectToPrefab);
