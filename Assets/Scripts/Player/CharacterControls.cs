@@ -63,7 +63,7 @@ public class CharacterControls : MonoBehaviour {
         
         GameObject[] gameControllers = GameObject.FindGameObjectsWithTag("GameController");
         if (gameControllers.Length != 1) {
-            Debug.LogError("Make sure this scene has exactly 1 object tagged \"MainCamera\".");
+            Debug.LogError("Make sure this scene has exactly 1 object tagged \"GameController\".");
             Debug.Break();
         }
 
