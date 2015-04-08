@@ -41,6 +41,7 @@ public static class CraftingRecipes {
     private interface ICraftingRecipe {
         bool canCraft(CharacterInventory i);
         void craftingResult(CharacterInventory i);
+		//void craftingWithFairyResult (CharacterInventory i);
     }
 
     #region Recipe Definitions
@@ -55,6 +56,10 @@ public static class CraftingRecipes {
         public void craftingResult(CharacterInventory i) {
             
         }
+
+		public void craftingWithFairyResult (CharacterInventory i){
+		
+		}
     }
     
     private class RecipeHouseSticks : ICraftingRecipe {
@@ -68,6 +73,10 @@ public static class CraftingRecipes {
         public void craftingResult(CharacterInventory i) {
             
         }
+
+		public void craftingWithFairyResult (CharacterInventory i){
+			
+		}
     }
 
     private class RecipeHouseStraw : ICraftingRecipe {
@@ -82,11 +91,23 @@ public static class CraftingRecipes {
             i.removeItem(ItemType.Straw, 5);
             i.removeItem(ItemType.Rope, 2);
 
-            GameObject player = i.gameObject;
-            Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
-                player.transform.position;
-            Object.Instantiate(Resources.Load("SpawnPrefabs/StrawHouse"), position, Quaternion.identity);
+			placeHouse (i);
         }
+
+		public void craftingWithFairyResult (CharacterInventory i){
+			i.removeItem(ItemType.Straw, 3);
+			i.removeItem(ItemType.Rope, 1);
+			i.removeItem(ItemType.Fairy, 1);
+			
+			placeHouse (i);
+		}
+
+		private void placeHouse(CharacterInventory i){
+			GameObject player = i.gameObject;
+			Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+				player.transform.position;
+			Object.Instantiate(Resources.Load("SpawnPrefabs/StrawHouse"), position, Quaternion.identity);
+		}
     }
 
     private class RecipeRope : ICraftingRecipe {
@@ -98,6 +119,8 @@ public static class CraftingRecipes {
             i.removeItem(ItemType.Grass, 2);
             i.addItem(ItemType.Rope);
         }
+
+
     }
     #endregion
 }

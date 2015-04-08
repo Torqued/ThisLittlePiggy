@@ -6,6 +6,7 @@ public enum ItemType {
     Straw,
     Sticks,
     Brick,
+	Fairy,
 	Rope
 }
 
