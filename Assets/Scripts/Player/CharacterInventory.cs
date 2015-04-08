@@ -8,7 +8,7 @@ public enum Crafting {
     HouseBricks,
     HouseSticks,
     HouseStraw,
-    HouseWood,
+    //HouseWood,
     Rope
 }
 
@@ -22,7 +22,7 @@ public static class CraftingRecipes {
         crafting[Crafting.HouseBricks] = new RecipeHouseBricks();
         crafting[Crafting.HouseSticks] = new RecipeHouseSticks();
         crafting[Crafting.HouseStraw] = new RecipeHouseStraw();
-        crafting[Crafting.HouseWood] = new RecipeHouseWood();
+        //crafting[Crafting.HouseWood] = new RecipeHouseWood();
         crafting[Crafting.Rope] = new RecipeRope();
     }
 
@@ -46,7 +46,10 @@ public static class CraftingRecipes {
     #region Recipe Definitions
     private class RecipeHouseBricks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-            return true;
+			if (i.getAmount (ItemType.Brick) >= 10 && i.getAmount(ItemType.Sticks) >= 4) {
+				return true;
+			}
+			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
@@ -56,7 +59,10 @@ public static class CraftingRecipes {
     
     private class RecipeHouseSticks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-            return true;
+			if (i.getAmount (ItemType.Rope) >= 4 && i.getAmount(ItemType.Sticks) >= 8) {
+				return true;
+			}
+			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
@@ -66,7 +72,10 @@ public static class CraftingRecipes {
 
     private class RecipeHouseStraw : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-            return i.getAmount(ItemType.Straw) >= 5 && i.getAmount(ItemType.Rope) >= 2;
+			if (i.getAmount (ItemType.Straw) >= 5 && i.getAmount(ItemType.Rope) >= 2) {
+				return true;
+			}
+			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
@@ -80,16 +89,6 @@ public static class CraftingRecipes {
         }
     }
 
-    private class RecipeHouseWood : ICraftingRecipe {
-        public bool canCraft(CharacterInventory i) {
-            return true;
-        }
-        
-        public void craftingResult(CharacterInventory i) {
-            
-        }
-    }
-    
     private class RecipeRope : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
             return i.getAmount(ItemType.Grass) >= 2;
