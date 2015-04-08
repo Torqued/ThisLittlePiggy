@@ -126,6 +126,7 @@ public class CharacterControls : MonoBehaviour {
     void Update() {
         checkKeyInputs();
         checkMouseInputs();
+        castMouseRay();
     }
 
     void OnApplicationFocus(bool focus) {
@@ -210,7 +211,32 @@ public class CharacterControls : MonoBehaviour {
         transform.localEulerAngles = new Vector3(pitch, yaw, 0);
     }
     #endregion
-        
+
+    #region Cast Mouse Ray for Highlighting Targets
+    void castMouseRay() {
+        Ray mouseRay;
+
+        if (cameraLocked) {
+            Vector3 mousePosition = Input.mousePosition;
+            mouseRay = mainCamera.GetComponent<Camera>().ScreenPointToRay(mousePosition);
+            Debug.DrawRay(mouseRay.origin, 10 * mouseRay.direction, Color.cyan);
+        }
+        else {
+            mouseRay = mainCamera.GetComponent<Camera>().ViewportPointToRay(new Vector3(0.5f, 0.5f));
+            Debug.DrawRay(mainCamera.transform.position, 10*mainCamera.transform.forward, Color.green);
+        }
+
+        RaycastHit collisionInfo;
+        if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out collisionInfo, 100)) {
+            MouseTarget target;
+            
+            if((target = collisionInfo.transform.gameObject.GetComponent<MouseTarget>()) != null) {
+                target.setOutline();
+            }
+        }
+    }
+    #endregion
+
     void LateUpdate() {
         Vector3 cameraOffset = Vector3.up * cameraSettings.defaultCameraOffset.y +
             transform.forward * cameraSettings.defaultCameraOffset.x;
@@ -223,27 +249,37 @@ public class CharacterControls : MonoBehaviour {
         #region Camera Collision
         RaycastHit collisionInfo;
         if (Physics.Raycast(transform.position, cameraOffset, out collisionInfo)) {
-            Vector3 collisionOffset = Vector3.zero;
-            if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
-                collisionOffset = Vector3.up;
-            }
-            if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-                cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
+                Vector3 collisionOffset = Vector3.zero;
+                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
+                    collisionOffset = Vector3.up;
+                }
+                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
+                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+                }
+                else {
+                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+                }
             }
             else {
-                cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+                cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
             }
         }
         else if (Physics.Raycast(transform.position, cameraOffset + Vector3.up, out collisionInfo)) {
-            Vector3 collisionOffset = Vector3.zero;
-            if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
-                collisionOffset = Vector3.up;
-            }
-            if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-                cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
+                Vector3 collisionOffset = Vector3.zero;
+                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
+                    collisionOffset = Vector3.up;
+                }
+                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
+                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+                }
+                else {
+                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+                }
             }
             else {
-                cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+                cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
             }
         }
         else {
