@@ -34,6 +34,8 @@ public class DayNightCycle : MonoBehaviour {
     }
 
     public bool isNightTime() {
-        return false;
+        float time = timeOfDay();
+
+        return time >= 0.55 && time <= 0.95;
     }
 }
