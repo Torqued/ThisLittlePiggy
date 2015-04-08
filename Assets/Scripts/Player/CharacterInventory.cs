@@ -8,7 +8,7 @@ public enum Crafting {
     HouseBricks,
     HouseSticks,
     HouseStraw,
-    HouseWood,
+    //HouseWood,
     Rope
 }
 
@@ -22,7 +22,7 @@ public static class CraftingRecipes {
         crafting[Crafting.HouseBricks] = new RecipeHouseBricks();
         crafting[Crafting.HouseSticks] = new RecipeHouseSticks();
         crafting[Crafting.HouseStraw] = new RecipeHouseStraw();
-        crafting[Crafting.HouseWood] = new RecipeHouseWood();
+        //crafting[Crafting.HouseWood] = new RecipeHouseWood();
         crafting[Crafting.Rope] = new RecipeRope();
     }
 
@@ -41,55 +41,75 @@ public static class CraftingRecipes {
     private interface ICraftingRecipe {
         bool canCraft(CharacterInventory i);
         void craftingResult(CharacterInventory i);
+		//void craftingWithFairyResult (CharacterInventory i);
     }
 
     #region Recipe Definitions
     private class RecipeHouseBricks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-            return true;
+			if (i.getAmount (ItemType.Brick) >= 10 && i.getAmount(ItemType.Sticks) >= 4) {
+				return true;
+			}
+			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
             
         }
+
+		public void craftingWithFairyResult (CharacterInventory i){
+		
+		}
     }
     
     private class RecipeHouseSticks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-            return true;
+			if (i.getAmount (ItemType.Rope) >= 4 && i.getAmount(ItemType.Sticks) >= 8) {
+				return true;
+			}
+			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
             
         }
+
+		public void craftingWithFairyResult (CharacterInventory i){
+			
+		}
     }
 
     private class RecipeHouseStraw : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-            return i.getAmount(ItemType.Straw) >= 5 && i.getAmount(ItemType.Rope) >= 2;
+			if (i.getAmount (ItemType.Straw) >= 5 && i.getAmount(ItemType.Rope) >= 2) {
+				return true;
+			}
+			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
             i.removeItem(ItemType.Straw, 5);
             i.removeItem(ItemType.Rope, 2);
 
-            GameObject player = i.gameObject;
-            Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
-                player.transform.position;
-            Object.Instantiate(Resources.Load("SpawnPrefabs/StrawHouse"), position, Quaternion.identity);
+			placeHouse (i);
         }
+
+		public void craftingWithFairyResult (CharacterInventory i){
+			i.removeItem(ItemType.Straw, 3);
+			i.removeItem(ItemType.Rope, 1);
+			i.removeItem(ItemType.Fairy, 1);
+			
+			placeHouse (i);
+		}
+
+		private void placeHouse(CharacterInventory i){
+			GameObject player = i.gameObject;
+			Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+				player.transform.position;
+			Object.Instantiate(Resources.Load("SpawnPrefabs/StrawHouse"), position, Quaternion.identity);
+		}
     }
 
-    private class RecipeHouseWood : ICraftingRecipe {
-        public bool canCraft(CharacterInventory i) {
-            return true;
-        }
-        
-        public void craftingResult(CharacterInventory i) {
-            
-        }
-    }
-    
     private class RecipeRope : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
             return i.getAmount(ItemType.Grass) >= 2;
@@ -99,6 +119,8 @@ public static class CraftingRecipes {
             i.removeItem(ItemType.Grass, 2);
             i.addItem(ItemType.Rope);
         }
+
+
     }
     #endregion
 }
