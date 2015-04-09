@@ -6,7 +6,8 @@ public enum ItemType {
     Straw,
     Sticks,
     Bricks,
-	Rope
+	Rope,
+    Fairy
 }
 
 public class Item : MonoBehaviour {
