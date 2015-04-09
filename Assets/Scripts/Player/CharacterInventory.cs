@@ -47,7 +47,7 @@ public static class CraftingRecipes {
     #region Recipe Definitions
     private class RecipeHouseBricks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-			if (i.getAmount (ItemType.Brick) >= 10 && i.getAmount(ItemType.Sticks) >= 4) {
+			if (i.getAmount (ItemType.Bricks) >= 10 && i.getAmount(ItemType.Sticks) >= 4) {
 				return true;
 			}
 			return false;
@@ -128,20 +128,38 @@ public static class CraftingRecipes {
 
 public class CharacterInventory : MonoBehaviour {
     private Dictionary<ItemType, int> inventory;
+    private Dictionary<ItemType, TextMesh> display;
 
     void Start() {
         inventory = new Dictionary<ItemType, int>();
         foreach (ItemType i in System.Enum.GetValues(typeof(ItemType))) {
             inventory[i] = 0;
         }
+
+        display = new Dictionary<ItemType, TextMesh>();
+
+        Transform child = transform.Find("GUI Camera");
+        child = child.Find("FromTop");
+
+        display[ItemType.Grass] = child.Find("Grass").gameObject.GetComponent<TextMesh>();
+        display[ItemType.Straw] = child.Find("Straw").gameObject.GetComponent<TextMesh>();
+        display[ItemType.Sticks] = child.Find("Sticks").gameObject.GetComponent<TextMesh>();
+        display[ItemType.Bricks] = child.Find("Bricks").gameObject.GetComponent<TextMesh>();
+        display[ItemType.Rope] = child.Find("Rope").gameObject.GetComponent<TextMesh>();
     }
 
     public void addItem(ItemType item) {
-        inventory[item]++;
+        addItem(item, 1);
+    }
+
+    public void addItem(ItemType item, int amount) {
+        inventory[item] += amount;
+        display[item].text = "" + inventory[item];
     }
 
     public void removeItem(ItemType item, int amount) {
         inventory[item] -= amount;
+        display[item].text = "" + inventory[item];
     }
 
     public int getAmount(ItemType item) {
