@@ -5,7 +5,7 @@ public enum ItemType {
 	Grass,
     Straw,
     Sticks,
-    Brick,
+    Bricks,
 	Rope
 }
 
