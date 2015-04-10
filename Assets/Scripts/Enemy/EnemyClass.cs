@@ -70,6 +70,7 @@ public class EnemyClass : MonoBehaviour {
 		if(other.gameObject.tag == "Player") {
 			playerInSight = false; //They are no longer detected.
 			this.gameObject.GetComponent<EnemyBehaviour>().Wander();
+			hash.playerSpotted = false;
 		}
 	}
 
@@ -89,6 +90,7 @@ public class EnemyClass : MonoBehaviour {
 			                   direction.normalized, out hit, col.radius)) {
 				if (hit.collider.gameObject.tag == "Player") {
 					playerInSight = true; //Spotted! Run!
+					hash.playerSpotted = true;
 					playerLastSighting = playerCurrentPos;
 				}
 			}
