@@ -65,6 +65,7 @@ public class EnemyClass : MonoBehaviour {
 		//If the player leaves the sensory collider
 		if(other.gameObject.tag == "Player") {
 			playerInSight = false; //They are no longer detected.
+			hash.playerSpotted = false;
 		}
 	}
 
@@ -83,6 +84,7 @@ public class EnemyClass : MonoBehaviour {
 			                   direction.normalized, out hit, col.radius)) {
 				if (hit.collider.gameObject.tag == "Player") {
 					playerInSight = true; //Spotted! Run!
+					hash.playerSpotted = true;
 					playerLastSighting = playerCurrentPos;
 				}
 			}

@@ -32,6 +32,7 @@ public class CharacterControls : MonoBehaviour {
     #endregion
 
     #region Private Instance Variables
+	private bool panicState;
     private Animator characterAnimator;
     private CharacterInventory inventory;
     private GameObject mainCamera;
@@ -302,8 +303,11 @@ public class CharacterControls : MonoBehaviour {
 
     private void updateAnimations() {
         characterAnimator.SetBool(hash.runningBool, forward || backward || strafeLeft || strafeRight);
-
-        #region Player Rotation
+		
+		panicState = hash.playerSpotted;
+		characterAnimator.SetBool(hash.panicBool, panicState);
+		
+		#region Player Rotation
         if (forward && !strafeLeft && !strafeRight) {
             nextPlayerYaw = 0;
         }
