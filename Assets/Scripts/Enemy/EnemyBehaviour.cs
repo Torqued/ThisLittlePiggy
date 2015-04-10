@@ -34,6 +34,8 @@ public class EnemyBehaviour : MonoBehaviour {
 	public int wander_radiusX = 40;
 	public int wander_radiusZ = 40;
 
+	NavMeshAgent agent;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -45,6 +47,7 @@ public class EnemyBehaviour : MonoBehaviour {
 		if (wander) {
 			Wander();
 		}
+		agent = GetComponent<NavMeshAgent>();
 
 	}
 
@@ -72,6 +75,8 @@ public class EnemyBehaviour : MonoBehaviour {
 	public void Chase(Vector3 player) {
 		wander = false;
 		flee = false; 
+		chase = true;
+		agent.SetDestination (player);
 	}
 
 	
