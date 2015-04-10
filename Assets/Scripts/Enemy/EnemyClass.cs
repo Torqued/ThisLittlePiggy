@@ -58,8 +58,10 @@ public class EnemyClass : MonoBehaviour {
 		if(other.gameObject.tag == "Player") {
 			playerCurrentPos = other.transform.position;
 			detectPlayer();
+			if (Vector3.Distance(playerCurrentPos, transform.position) < col.radius) {
 			playerInSight = true; //Spotted! Run!
 			playerLastSighting = playerCurrentPos;
+		}
 		}
 	}
 
@@ -67,6 +69,8 @@ public class EnemyClass : MonoBehaviour {
 		//If the player leaves the sensory collider
 		if(other.gameObject.tag == "Player") {
 			playerInSight = false; //They are no longer detected.
+			this.gameObject.GetComponent<EnemyBehaviour>().Wander();
+			hash.playerSpotted = false;
 		}
 	}
 
@@ -81,10 +85,12 @@ public class EnemyClass : MonoBehaviour {
 		float angle = Vector3.Angle(direction, transform.forward);
 		if(angle < fieldOfViewAngle * 0.5f) {
 			RaycastHit hit; //Send out a Raycast
-			if(Physics.Raycast(transform.position + transform.up, 
+
+			if(Physics.SphereCast(transform.position + transform.up, 5.0f, 
 			                   direction.normalized, out hit, col.radius)) {
 				if (hit.collider.gameObject.tag == "Player") {
 					playerInSight = true; //Spotted! Run!
+					hash.playerSpotted = true;
 					playerLastSighting = playerCurrentPos;
 				}
 			}

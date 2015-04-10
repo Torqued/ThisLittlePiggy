@@ -79,9 +79,9 @@ public static class CraftingRecipes {
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
-			Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+			Vector3 position = 20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0.25f, player.transform.forward.z)) +
 				player.transform.position;
-			Object.Instantiate((Resources.Load("Houses/StrawHousePrefab", typeof(GameObject)) as GameObject), position, Quaternion.identity);
+			Object.Instantiate((Resources.Load("Houses/BrickHouse", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
     }
     
@@ -110,9 +110,9 @@ public static class CraftingRecipes {
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
-			Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+			Vector3 position = 20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
 				player.transform.position;
-			Object.Instantiate((Resources.Load("Houses/StrawHousePrefab", typeof(GameObject)) as GameObject), position, Quaternion.identity);
+			Object.Instantiate((Resources.Load("Houses/LogHouse", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
 
 
@@ -143,7 +143,7 @@ public static class CraftingRecipes {
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
-			Vector3 position = 10*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+			Vector3 position = 20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0.5f, player.transform.forward.z)) +
 				player.transform.position;
 			Object.Instantiate((Resources.Load("Houses/StrawHousePrefab", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
