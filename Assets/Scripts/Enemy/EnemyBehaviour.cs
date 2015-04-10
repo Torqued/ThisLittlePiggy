@@ -31,8 +31,8 @@ public class EnemyBehaviour : MonoBehaviour {
 	public bool chase;
 
 	// variables to limit wolf wander range 
-	public int wander_radiusX = 40;
-	public int wander_radiusZ = 40;
+	public int wander_radiusX = 20;
+	public int wander_radiusZ = 20;
 
 	NavMeshAgent agent;
 
@@ -202,13 +202,14 @@ public class EnemyBehaviour : MonoBehaviour {
 		
 		int check_sign_x = Random.Range (0, 2);
 		int check_sign_z = Random.Range (0, 2);
-		
+		float x_float = x * 1.0f;
+		float z_float = z * 1.0f;
 		if (check_sign_x > 0)
-			x *= -1;
+			x_float *= -1.0f;
 		if (check_sign_z > 0)
-			z *= -1;
+			z_float *= -1.0f;
 		
-		Vector3 final_vector = new Vector3 (x, 0.0f, z);
+		Vector3 final_vector = new Vector3 (transformer.position.x - x_float, transform.position.y,transformer.position.z -  z_float);
 		return final_vector;
 	}
 	
