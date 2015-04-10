@@ -4,10 +4,11 @@ using System.Collections;
 public class FairyController : MonoBehaviour {
 
 	public int numFairies;
-	private bool hasSpawned;
+	public bool hasSpawned;
 	private GameObject player;
 	private GameObject gc;
 	private DayNightCycle dayNight;
+	public GameObject fairyObj;
 	
 	void Start(){
 		player = GameObject.FindGameObjectWithTag("Player");
@@ -20,10 +21,14 @@ public class FairyController : MonoBehaviour {
 		if (dayNight.isNightTime()) {
 			if(!hasSpawned)
 			{
-				int spanwed = 0;
-				while(spanwed < numFairies)
+				int spawned = 0;
+				Debug.Log("About to spawn");
+				while(spawned < numFairies)
 				{
-					Object.Instantiate(Resources.Load("SpawnPrefabs/StrawHouse"), player.transform.position, Quaternion.identity);
+
+					Debug.Log("Spawning");
+					Object.Instantiate(fairyObj, player.transform.position, Quaternion.identity);
+					spawned++;
 				}
 			}
 			hasSpawned = true;
