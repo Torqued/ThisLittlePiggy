@@ -58,6 +58,8 @@ public class EnemyClass : MonoBehaviour {
 		if(other.gameObject.tag == "Player") {
 			playerCurrentPos = other.transform.position;
 			detectPlayer();
+			playerInSight = true; //Spotted! Run!
+			playerLastSighting = playerCurrentPos;
 		}
 	}
 
@@ -68,6 +70,11 @@ public class EnemyClass : MonoBehaviour {
 		}
 	}
 
+	void FixedUpdate() {
+		if (playerInSight) {
+			this.gameObject.GetComponent<EnemyBehaviour>().Chase(playerLastSighting);
+		}
+	}
 	void detectPlayer() {
 		//Sets the playerInSight variable to true or false.
 		Vector3 direction = playerCurrentPos - transform.position;
