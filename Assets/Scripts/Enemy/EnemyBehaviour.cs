@@ -41,7 +41,7 @@ public class EnemyBehaviour : MonoBehaviour {
 	{
 		
 		transformer = GetComponent<Transform> ();
-		allWolves = GameObject.FindGameObjectsWithTag ("Wolf");
+		//allWolves = GameObject.FindGameObjectsWithTag ("Wolf");
 		//allObstacles = GameObject.FindGameObjectsWithTag ("Obstacles");
 		range = 5.0f;
 		if (wander) {
