@@ -12,6 +12,7 @@ public enum Crafting {
     Rope
 }
 
+
 public static class CraftingRecipes {
 
     private static Dictionary<Crafting, ICraftingRecipe> crafting;
@@ -37,11 +38,19 @@ public static class CraftingRecipes {
         }
         return false;
     }
+
+	public static bool craftWithFairy(Crafting craft, CharacterInventory i) {
+		if (canCraft(craft, i)) {
+			crafting[craft].craftingResult(i);
+			return true;
+		}
+		return false;
+	}
     
     private interface ICraftingRecipe {
         bool canCraft(CharacterInventory i);
         void craftingResult(CharacterInventory i);
-		//void craftingWithFairyResult (CharacterInventory i);
+		void craftingWithFairyResult (CharacterInventory i);
     }
 
     #region Recipe Definitions
@@ -54,11 +63,25 @@ public static class CraftingRecipes {
         }
         
         public void craftingResult(CharacterInventory i) {
-            
+			i.removeItem (ItemType.Bricks, 10);
+			i.removeItem (ItemType.Sticks, 4);
+			
+			placeHouse (i);
         }
 
 		public void craftingWithFairyResult (CharacterInventory i){
-		
+			i.removeItem (ItemType.Bricks, 8);
+			i.removeItem (ItemType.Sticks, 3);
+			i.removeItem(ItemType.Fairy, 1);
+			
+			placeHouse (i);
+		}
+
+		private void placeHouse(CharacterInventory i){
+			GameObject player = i.gameObject;
+			Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+				player.transform.position;
+			Object.Instantiate((Resources.Load("Houses/StrawHousePrefab", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
     }
     
@@ -71,12 +94,28 @@ public static class CraftingRecipes {
         }
         
         public void craftingResult(CharacterInventory i) {
-            
+			i.removeItem (ItemType.Rope, 4);
+			i.removeItem (ItemType.Sticks, 8);
+
+			placeHouse (i);
         }
 
 		public void craftingWithFairyResult (CharacterInventory i){
+			i.removeItem (ItemType.Rope, 3);
+			i.removeItem (ItemType.Sticks, 6);
+			i.removeItem(ItemType.Fairy, 1);
 			
+			placeHouse (i);
 		}
+
+		private void placeHouse(CharacterInventory i){
+			GameObject player = i.gameObject;
+			Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+				player.transform.position;
+			Object.Instantiate((Resources.Load("Houses/StrawHousePrefab", typeof(GameObject)) as GameObject), position, Quaternion.identity);
+		}
+
+
     }
 
     private class RecipeHouseStraw : ICraftingRecipe {
@@ -104,9 +143,9 @@ public static class CraftingRecipes {
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
-			Vector3 position = 3*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+			Vector3 position = 10*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
 				player.transform.position;
-			Object.Instantiate(Resources.Load("SpawnPrefabs/StrawHouse"), position, Quaternion.identity);
+			Object.Instantiate((Resources.Load("Houses/StrawHousePrefab", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
     }
 
@@ -119,6 +158,10 @@ public static class CraftingRecipes {
             i.removeItem(ItemType.Grass, 2);
             i.addItem(ItemType.Rope);
         }
+		public void craftingWithFairyResult (CharacterInventory i){
+		//No Recipe for rope with Fairy
+		}	
+
 
 
     }
@@ -133,7 +176,7 @@ public class CharacterInventory : MonoBehaviour {
     void Start() {
         inventory = new Dictionary<ItemType, int>();
         foreach (ItemType i in System.Enum.GetValues(typeof(ItemType))) {
-            inventory[i] = 0;
+            inventory[i] = 10;
         }
 
         display = new Dictionary<ItemType, TextMesh>();
