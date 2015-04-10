@@ -15,15 +15,13 @@ public class EnemyBehaviour : MonoBehaviour {
 	public float speed = 5;
 	
 	
-	// Variables for raycasting to avoid obstacles
+	/* Variables for raycasting to avoid obstacles
 	RaycastHit hit;
 	public int rayRange = 10;
 	public float rayRotationSpeed = 100.0f;
 	private bool rayObstacle = false;
-	
-	// Unity Game Components 
-	GameObject[] allWolves;
-	GameObject[] allObstacles;
+	*/
+
 	
 	// variables to switch between the 3 behaviours
 	public bool wander;
@@ -41,8 +39,6 @@ public class EnemyBehaviour : MonoBehaviour {
 	{
 		
 		transformer = GetComponent<Transform> ();
-		//allWolves = GameObject.FindGameObjectsWithTag ("Wolf");
-		//allObstacles = GameObject.FindGameObjectsWithTag ("Obstacles");
 		range = 5.0f;
 		if (wander) {
 			Wander();
@@ -62,6 +58,7 @@ public class EnemyBehaviour : MonoBehaviour {
 		InvokeRepeating ("NewTarget", 0.01f, interval);
 		
 		moveDirection = (target - transformer.position).normalized;
+		//agent.SetDestination(target);
 	}
 
 	public void Flee(Transform goal) {
@@ -70,80 +67,18 @@ public class EnemyBehaviour : MonoBehaviour {
 		chase = false;
 		target = goal.position;
 		moveDirection = (target - transformer.position).normalized;
+		//agent.SetDestination(target);
 	}
 
 	public void Chase(Vector3 player) {
 		wander = false;
 		flee = false; 
 		chase = true;
-		agent.SetDestination (player);
-	}
-
-	
-	// function to cast rays so that character avoids static obstacles. 
-	bool MakeRaycasts ()
-	{
-		// ray-casting code for static obstacle avoidance		
-		// check for obstacles in front of a wolf
-		// has 3 rays to detect obstacles 
+		target = player;
 		moveDirection = (target - transformer.position).normalized;
-		bool hitRay = false;
-		// right ray and left ray
-		if (Physics.Raycast (transformer.position + transformer.right, transformer.right + transformer.forward, out hit, rayRange)) {
-			if (hit.collider.gameObject.CompareTag ("Obstacle")) {
-				if (wander && Vector3.Distance (hit.transform.position, target) <= range)
-					target = GetTarget ();
-				rayObstacle = true;
-				hitRay = true;
-				transformer.Rotate (-Vector3.up * Time.deltaTime * rayRotationSpeed);
-				transformer.Rotate (-Vector3.right * Time.deltaTime * rayRotationSpeed);
-			}
-		} else if (Physics.Raycast (transformer.position - transformer.right, - transformer.right + transformer.forward, out hit, rayRange)) {
-			if (hit.collider.gameObject.CompareTag ("Obstacle")) {
-				if (wander && Vector3.Distance (hit.transform.position, target) <= range)
-					target = GetTarget ();
-				rayObstacle = true;
-				hitRay = true;
-				transformer.Rotate (Vector3.up * Time.deltaTime * rayRotationSpeed);
-				transformer.Rotate (-Vector3.right * Time.deltaTime * rayRotationSpeed);
-			}
-		} 
-		
-		
-		// We also add two more rays to the back of the object. This is needed when we are not turning around corners
-		// but still trying to reach the corners of the obstacle.
-		
-		else if (Physics.Raycast (transformer.position - (transformer.forward), transformer.right, out hit, 5)) {
-			if (hit.collider.gameObject.CompareTag ("Obstacle")) {
-				
-				if (wander && Vector3.Distance (hit.transform.position, target) <= range)
-					target = GetTarget ();
-				rayObstacle = true;
-				hitRay = true;
-				transformer.Rotate (-Vector3.right * Time.deltaTime * rayRotationSpeed);
-			}
-		} else if (Physics.Raycast (transformer.position - (transformer.forward), -transformer.right, out hit, 5)) {
-			if (hit.collider.gameObject.CompareTag ("Obstacle")) {
-				
-				if (wander && Vector3.Distance (hit.transform.position, target) <= range)
-					target = GetTarget ();
-				rayObstacle = true;
-				hitRay = true;
-				transformer.Rotate (-Vector3.right * Time.deltaTime * rayRotationSpeed);
-			}
-		}
-		/*
-				// Use to debug the Physics.RayCast.
-				Debug.DrawRay (transformer.position + (transformer.right), transformer.right + transformer.forward * rayRange, Color.red);
-				Debug.DrawRay (transformer.position - (transformer.right), -transformer.right + transformer.forward * rayRange, Color.red);
-		
-				Debug.DrawRay (transformer.position - (transformer.forward), - transformer.right * 5, Color.blue);
-		
-				Debug.DrawRay (transformer.position - (transformer.forward), transformer.right * 5, Color.blue);
-
-				*/
-		return hitRay;
+		//agent.SetDestination (player);
 	}
+
 	
 	void Move ()
 	{
@@ -151,20 +86,10 @@ public class EnemyBehaviour : MonoBehaviour {
 		// an obstacle.
 		moveDirection = (target - transformer.position).normalized;
 
-		if (!rayObstacle) {
-			// using quarternions instead of euler angles in the end to avoid gimbal lock effect
-			var newRotation = Quaternion.LookRotation (moveDirection);
-			transform.rotation = Quaternion.Slerp (transform.rotation, newRotation, Time.deltaTime);
-			/*
-						var newRotation = Quaternion.LookRotation (moveDirection).eulerAngles;
-						var angles = transformer.rotation.eulerAngles;
-						transformer.rotation = Quaternion.Euler (0.0f, 
-			                                         Mathf.SmoothDampAngle (angles.y, newRotation.y, ref velocity, 0.1f, rotationSpeed),
-			                                         0.0f);
-			*/
+		// using quarternions instead of euler angles in the end to avoid gimbal lock effect
+		var newRotation = Quaternion.LookRotation (moveDirection);
+		transform.rotation = Quaternion.Slerp (transform.rotation, newRotation, Time.deltaTime);
 
-		}
-		
 		
 		transformer.position += transformer.forward * speed * Time.deltaTime;
 		
@@ -173,12 +98,7 @@ public class EnemyBehaviour : MonoBehaviour {
 	void  FixedUpdate ()
 	{   	
 
-		/*
-		if (!MakeRaycasts ()) {
-			rayObstacle = false;
-		} else
-			rayObstacle = true;
-		*/
+
 		if (Vector3.Distance (transformer.position, target) > range) {
 			Move ();
 		} else if (wander) {
