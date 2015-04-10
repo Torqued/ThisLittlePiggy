@@ -24,12 +24,18 @@ public class EnemyBehaviour : MonoBehaviour {
 	// Unity Game Components 
 	GameObject[] allWolves;
 	GameObject[] allObstacles;
-	GameObject[] allGoals; 
 	
 	// variables to switch between the 3 behaviours
 	public bool wander;
-	public bool reachGoal;
-	
+	public bool flee;
+	public bool chase;
+
+	// variables to limit wolf wander range 
+	public int wander_radiusX = 40;
+	public int wander_radiusZ = 40;
+
+	NavMeshAgent agent;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -39,87 +45,40 @@ public class EnemyBehaviour : MonoBehaviour {
 		//allObstacles = GameObject.FindGameObjectsWithTag ("Obstacles");
 		range = 5.0f;
 		if (wander) {
-			target = GetTarget ();
-			
-			int wanderInterval = Random.Range (3, 6);
-			float interval = (float)wanderInterval;
-			InvokeRepeating ("NewTarget", 0.01f, interval);
-			
-			moveDirection = (target - transformer.position).normalized;
+			Wander();
 		}
-		
-		if (reachGoal) {
-			allGoals = GameObject.FindGameObjectsWithTag ("Goal");
-			var min = 200f;
-			var current = 0f;
-			// there are 4 goals, so each character finds nearest goal and heads for it
-			foreach (var goal in allGoals) {
-				current = Vector3.Distance (goal.transform.position, transformer.position);
-				if (current < min) {
-					min = current; 
-					target = goal.transform.position;
-				}
-				moveDirection = (target - transformer.position).normalized;
-			}			
-		}
+		agent = GetComponent<NavMeshAgent>();
+
 	}
 
-	// uses separation behavior to avoid other characters. 
-	void AvoidOtherCharacters ()
-	{
-		// for each character in the list that is not this character, we check if it is in this character's line of sight. 
-		// if it is, this character turns right to avoid the other characters. 
-		// only check for line of sight if character is near enough
+	public void Wander () {
+		wander = true;
+		flee = false;
+		chase = false;
+		target = GetTarget ();
 		
-		foreach (GameObject character in allWolves) {
-			// first check that the character is not checking itself. 
-			if (!GameObject.Equals (this, character)) {
-				// now check that the other character is near enough for a possible collision
-				float distance = Vector3.Distance (transformer.position, character.transform.position);
-				
-				if (distance > 0 && distance < 5f) {
-					if (Vector3.Dot ((transformer.position - character.transform.position).normalized, transformer.forward) > 0) {
-						// we found a character in our line of sight that we could hit. 
-						// so we turn away from it 
-						// calculate vector going away from this object
-						// use separation behavior
-						Vector3 direction = (transform.position - character.transform.position).normalized;	
-						// give it a weight of the distance, so if is further away, it moves less
-						direction = direction / distance;
-						moveDirection += direction;
-						
-					}
-				}
-			}
-		}
+		int wanderInterval = Random.Range (3, 6);
+		float interval = (float)wanderInterval;
+		InvokeRepeating ("NewTarget", 0.01f, interval);
 		
+		moveDirection = (target - transformer.position).normalized;
 	}
-	
-	// helps to avoid round obstacles better using separation behavior.
-	void AvoidRoundObstacles ()
-	{
-		// for each character in the list that is not this character, we check if it is in this character's line of sight. 
-		// if it is, this character turns right to avoid the other characters. 
-		// only check for line of sight if character is near enough
 
-		foreach (GameObject obstacle in allObstacles) {
-			// now check that the obstacle is near enough for a possible collision
-			float distance = Vector3.Distance (transformer.position, obstacle.transform.position);
-			if (distance > 0 && distance < 3f) {
-				if (Vector3.Dot ((transformer.position - obstacle.transform.position).normalized, transformer.forward) > 0) {
-					// we found a obstacle in our line of sight that we could hit. 
-					// so we turn away from it 
-					// calculate vector going away from this object
-					// use separation behavior
-					Vector3 direction = (transform.position - obstacle.transform.position).normalized;	
-					// give it a weight of the distance, so if is further away, it moves less
-					direction = direction / distance;
-					moveDirection += direction;
-					
-				}
-			}
-		}
+	public void Flee(Transform goal) {
+		wander = false; 
+		flee = true;
+		chase = false;
+		target = goal.position;
+		moveDirection = (target - transformer.position).normalized;
 	}
+
+	public void Chase(Vector3 player) {
+		wander = false;
+		flee = false; 
+		chase = true;
+		agent.SetDestination (player);
+	}
+
 	
 	// function to cast rays so that character avoids static obstacles. 
 	bool MakeRaycasts ()
@@ -213,34 +172,33 @@ public class EnemyBehaviour : MonoBehaviour {
 	
 	void  FixedUpdate ()
 	{   	
-		
-		if (Time.time > 5)
-			AvoidOtherCharacters ();
-		
-		//AvoidRoundObstacles ();
 
+		/*
 		if (!MakeRaycasts ()) {
 			rayObstacle = false;
 		} else
 			rayObstacle = true;
-	
+		*/
 		if (Vector3.Distance (transformer.position, target) > range) {
 			Move ();
 		} else if (wander) {
 			target = GetTarget ();
-		} 
+		} else if (flee) {
+			GameObject.Destroy(this.gameObject);
+		}
 		
 	}
 	
 	void Update ()
 	{
+	
 	}
 	
 	Vector3 GetTarget ()
 	{
 		// set random initial target, and change this target
-		int x = Random.Range (0, 40);
-		int z = Random.Range (0, 40);
+		int x = Random.Range (0, wander_radiusX);
+		int z = Random.Range (0, wander_radiusZ);
 		
 		int check_sign_x = Random.Range (0, 2);
 		int check_sign_z = Random.Range (0, 2);
