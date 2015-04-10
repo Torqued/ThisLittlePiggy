@@ -58,6 +58,8 @@ public class EnemyClass : MonoBehaviour {
 		if(other.gameObject.tag == "Player") {
 			playerCurrentPos = other.transform.position;
 			detectPlayer();
+			playerInSight = true; //Spotted! Run!
+			playerLastSighting = playerCurrentPos;
 		}
 	}
 

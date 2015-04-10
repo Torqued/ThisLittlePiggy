@@ -32,6 +32,8 @@ public class CharacterControls : MonoBehaviour {
     #endregion
 
     #region Private Instance Variables
+	private float walkSpeed;
+	private float runSpeed;
 	private bool panicState;
     private Animator characterAnimator;
     private CharacterInventory inventory;
@@ -60,6 +62,9 @@ public class CharacterControls : MonoBehaviour {
         }
         
         mainCamera = mainCameras[0];
+
+		walkSpeed = moveSpeed;
+		runSpeed = moveSpeed*1.5f;
         
         
         GameObject[] gameControllers = GameObject.FindGameObjectsWithTag("GameController");
@@ -102,6 +107,9 @@ public class CharacterControls : MonoBehaviour {
 
     #region Player Movement
     void FixedUpdate() {
+		if(panicState == true) moveSpeed = runSpeed;
+		else moveSpeed = walkSpeed;
+
         Vector3 nextVelocity = new Vector3();
 
         if (forward) {
