@@ -9,7 +9,6 @@ public class HashIds : MonoBehaviour {
 	public int playerDetectedBool;
 	public int fleeBool;
 	public int panicBool;
-	public bool playerSpotted = false; //Player Panic Mode Hack.
 
 	void Awake () {
 		idleBool = Animator.StringToHash("Idle");

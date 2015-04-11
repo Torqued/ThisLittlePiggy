@@ -26,22 +26,21 @@ public class CameraSettings {
 public class CharacterControls : MonoBehaviour {
 
     #region Serializable Fields
-    public float moveSpeed;
+    public float walkSpeed = 10;
+    public float runSpeed = 15;
     public KeySettings keySettings;
     public CameraSettings cameraSettings;
     #endregion
 
     #region Private Instance Variables
-	private float walkSpeed;
-	private float runSpeed;
-	private bool panicState;
     private Animator characterAnimator;
+    private CameraControl cameraControl;
     private CharacterInventory inventory;
     private GameObject mainCamera;
     private GameObject characterModel;
     private GameObject gameController;
-    private Item currentItem;
     private HashIds hash;
+    private Item currentItem;
     private Rigidbody rigidBody;
     private bool cameraLocked;
     private bool gamePaused;
@@ -49,6 +48,7 @@ public class CharacterControls : MonoBehaviour {
     private bool backward, wasBackward;
     private bool strafeLeft, wasLeft;
     private bool strafeRight, wasRight;
+    private int enemyAggro;
     private float yaw, pitch, cameraZoom, nextCameraZoom;
     private float nextPlayerYaw;
     #endregion
@@ -62,10 +62,6 @@ public class CharacterControls : MonoBehaviour {
         }
         
         mainCamera = mainCameras[0];
-
-		walkSpeed = moveSpeed;
-		runSpeed = moveSpeed*1.5f;
-        
         
         GameObject[] gameControllers = GameObject.FindGameObjectsWithTag("GameController");
         if (gameControllers.Length != 1) {
@@ -103,13 +99,12 @@ public class CharacterControls : MonoBehaviour {
         //Animation
         hash = gameController.GetComponent<HashIds>();
         characterAnimator = characterModel.GetComponent<Animator>();
+
+        Physics.IgnoreCollision(GetComponent<Collider>(), mainCamera.GetComponent<Collider>());
     }
 
     #region Player Movement
     void FixedUpdate() {
-		if(panicState == true) moveSpeed = runSpeed;
-		else moveSpeed = walkSpeed;
-
         Vector3 nextVelocity = new Vector3();
 
         if (forward) {
@@ -126,7 +121,7 @@ public class CharacterControls : MonoBehaviour {
             nextVelocity += Vector3.Cross(Vector3.up, transform.forward);
         }
 
-        nextVelocity = Vector3.Normalize(nextVelocity) * moveSpeed;
+        nextVelocity = Vector3.Normalize(nextVelocity) * (enemyAggro > 0 ? runSpeed : walkSpeed);
 
         rigidBody.velocity = new Vector3(nextVelocity.x, rigidBody.velocity.y, nextVelocity.z);
     }
@@ -253,50 +248,8 @@ public class CharacterControls : MonoBehaviour {
         // Zeno's Paradox (creates smooth zooming)
         cameraZoom = Mathf.Lerp(cameraZoom, nextCameraZoom, 0.2f);
 
-        Vector3 cameraPosition;
-
-        #region Camera Collision
-        RaycastHit collisionInfo;
-        if (Physics.Raycast(transform.position, cameraOffset, out collisionInfo)) {
-            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
-                Vector3 collisionOffset = Vector3.zero;
-                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
-                    collisionOffset = Vector3.up;
-                }
-                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
-                }
-                else {
-                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
-                }
-            }
-            else {
-                cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
-            }
-        }
-        else if (Physics.Raycast(transform.position, cameraOffset + Vector3.up, out collisionInfo)) {
-            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
-                Vector3 collisionOffset = Vector3.zero;
-                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
-                    collisionOffset = Vector3.up;
-                }
-                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
-                }
-                else {
-                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
-                }
-            }
-            else {
-                cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
-            }
-        }
-        else {
-            cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
-        }
-        #endregion
-
-        mainCamera.transform.position = cameraPosition;
+        Vector3 cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
+        mainCamera.GetComponent<CameraControl>().setPosition(cameraPosition);
 
         Debug.DrawRay(transform.position, transform.forward * 10, Color.yellow);
         Debug.DrawRay(transform.position, mainCamera.transform.position - transform.position, Color.red);
@@ -311,9 +264,8 @@ public class CharacterControls : MonoBehaviour {
 
     private void updateAnimations() {
         characterAnimator.SetBool(hash.runningBool, forward || backward || strafeLeft || strafeRight);
-		
-		panicState = hash.playerSpotted;
-		characterAnimator.SetBool(hash.panicBool, panicState);
+
+		characterAnimator.SetBool(hash.panicBool, enemyAggro > 0);
 		
 		#region Player Rotation
         if (forward && !strafeLeft && !strafeRight) {
@@ -348,5 +300,13 @@ public class CharacterControls : MonoBehaviour {
 
     public void setCurrentItem(Item item) {
         currentItem = item;
+    }
+
+    public void increaseAggro() {
+        enemyAggro++;
+    }
+
+    public void decreaseAggro() {
+        enemyAggro--;
     }
 }
