@@ -27,9 +27,14 @@ public class EnemyClass : MonoBehaviour {
 	public bool playerInSight = false;
 	public float fieldOfViewAngle = 90f;
 
+
+	private EnemyBehaviour behavior; 
+
 	// Use this for initialization
 	void Awake() {
 		gameController = GameObject.FindGameObjectWithTag("GameController");
+
+		behavior = this.gameObject.GetComponent<EnemyBehaviour>();
 
 		Transform modelTransform = transform.Find("Model");
 		if (modelTransform == null) {
@@ -58,10 +63,7 @@ public class EnemyClass : MonoBehaviour {
 		if(other.gameObject.tag == "Player") {
 			playerCurrentPos = other.transform.position;
 			detectPlayer();
-			if (Vector3.Distance(playerCurrentPos, transform.position) < col.radius) {
-			playerInSight = true; //Spotted! Run!
-			playerLastSighting = playerCurrentPos;
-		}
+			
 		}
 	}
 
@@ -69,16 +71,21 @@ public class EnemyClass : MonoBehaviour {
 		//If the player leaves the sensory collider
 		if(other.gameObject.tag == "Player") {
 			playerInSight = false; //They are no longer detected.
-			this.gameObject.GetComponent<EnemyBehaviour>().Wander();
 			//hash.playerSpotted = false;
+			if (!behavior.flee) {
+				behavior.Wander();
+			}
 		}
 	}
 
 	void FixedUpdate() {
-		if (playerInSight) {
-			this.gameObject.GetComponent<EnemyBehaviour>().Chase(playerLastSighting);
+		if (playerInSight && !behavior.flee) {
+			// if wolf sees player and not daytime, chase player
+			behavior.Chase(playerLastSighting);
 		}
 	}
+
+
 	void detectPlayer() {
 		//Sets the playerInSight variable to true or false.
 		Vector3 direction = playerCurrentPos - transform.position;
