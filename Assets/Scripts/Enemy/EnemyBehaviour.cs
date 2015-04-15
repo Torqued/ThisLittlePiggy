@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyBehaviour : MonoBehaviour {
+public class EnemyBehaviour : EnemyClass {
 
 	// variables for moving around
 	Transform transformer;
