@@ -10,7 +10,7 @@ public class CameraControl : MonoBehaviour {
         rigidBody = GetComponent<Rigidbody>();
     }
 
-	void FixedUpdate () {
+	void LateUpdate () {
         rigidBody.MovePosition(position);
 	}
 

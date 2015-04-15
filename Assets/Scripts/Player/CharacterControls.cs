@@ -9,6 +9,7 @@ public class KeySettings {
     public KeyCode left = KeyCode.A;
     public KeyCode right = KeyCode.D;
     public KeyCode interact = KeyCode.F;
+    public KeyCode toggleHUD = KeyCode.E;
     public KeyCode guiMode = KeyCode.Tab;
     public KeyCode pause = KeyCode.Escape;
 }
@@ -39,6 +40,7 @@ public class CharacterControls : MonoBehaviour {
     private GameObject mainCamera;
     private GameObject characterModel;
     private GameObject gameController;
+    private HUD_Movement inventoryMovement;
     private HashIds hash;
     private Item currentItem;
     private Rigidbody rigidBody;
@@ -71,13 +73,25 @@ public class CharacterControls : MonoBehaviour {
 
         gameController = gameControllers[0];
 
-        Transform modelTransform = transform.Find("Model");
-        if (modelTransform == null) {
+
+        Transform child;
+        if ((child = transform.Find("Model")) == null) {
             Debug.LogError("This object is missing a child object called \"Model\".");
             Debug.Break();
         }
 
-        characterModel = modelTransform.gameObject;
+        characterModel = child.gameObject;
+
+
+        if ((child = transform.Find("GUI Camera/Inventory")) == null) {
+            Debug.LogError("This object is missing the child object \"GUI Camera/Inventory\".");
+            Debug.Break();
+        }
+
+        if ((inventoryMovement = child.gameObject.GetComponent<HUD_Movement>()) == null) {
+            Debug.LogError("\"GUI Camera/Inventory\" must have a HUD_Movement component.");
+            Debug.Break();
+        }
 
         if ((rigidBody = GetComponent<Rigidbody>()) == null) {
             Debug.LogError("There is no rigidbody attached to " + gameObject + ".");
@@ -99,8 +113,6 @@ public class CharacterControls : MonoBehaviour {
         //Animation
         hash = gameController.GetComponent<HashIds>();
         characterAnimator = characterModel.GetComponent<Animator>();
-
-        Physics.IgnoreCollision(GetComponent<Collider>(), mainCamera.GetComponent<Collider>());
     }
 
     #region Player Movement
@@ -180,6 +192,10 @@ public class CharacterControls : MonoBehaviour {
             Cursor.visible = cameraLocked;
         }
 
+        if (Input.GetKeyDown(keySettings.toggleHUD)) {
+            inventoryMovement.toggleHUD();
+        }
+
         if (Input.GetKeyDown(keySettings.pause)) {
             gamePaused = !gamePaused;
         }
@@ -249,7 +265,40 @@ public class CharacterControls : MonoBehaviour {
         cameraZoom = Mathf.Lerp(cameraZoom, nextCameraZoom, 0.2f);
 
         Vector3 cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
-        mainCamera.GetComponent<CameraControl>().setPosition(cameraPosition);
+
+        #region Camera Collision
+        RaycastHit collisionInfo;
+        if (Physics.Raycast(transform.position, cameraOffset, out collisionInfo)) {
+            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
+                Vector3 collisionOffset = Vector3.zero;
+                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
+                    collisionOffset = Vector3.up;
+                }
+                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
+                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+                }
+                else {
+                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+                }
+            }
+        }
+        else if (Physics.Raycast(transform.position, cameraOffset + Vector3.up, out collisionInfo)) {
+            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
+                Vector3 collisionOffset = Vector3.zero;
+                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
+                    collisionOffset = Vector3.up;
+                }
+                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
+                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
+                }
+                else {
+                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
+                }
+            }
+        }
+        #endregion
+
+        mainCamera.transform.position = cameraPosition;
 
         Debug.DrawRay(transform.position, transform.forward * 10, Color.yellow);
         Debug.DrawRay(transform.position, mainCamera.transform.position - transform.position, Color.red);

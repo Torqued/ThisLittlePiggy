@@ -176,13 +176,13 @@ public class CharacterInventory : MonoBehaviour {
     void Start() {
         inventory = new Dictionary<ItemType, int>();
         foreach (ItemType i in System.Enum.GetValues(typeof(ItemType))) {
-            inventory[i] = 10;
+            inventory[i] = 0;
         }
 
         display = new Dictionary<ItemType, TextMesh>();
 
         Transform child = transform.Find("GUI Camera");
-        child = child.Find("FromTop");
+        child = child.Find("Inventory");
 
         display[ItemType.Grass] = child.Find("Grass").gameObject.GetComponent<TextMesh>();
         display[ItemType.Straw] = child.Find("Straw").gameObject.GetComponent<TextMesh>();
@@ -197,6 +197,7 @@ public class CharacterInventory : MonoBehaviour {
 
     public void addItem(ItemType item, int amount) {
         inventory[item] += amount;
+        Debug.Log(inventory[item]);
         display[item].text = "" + inventory[item];
     }
 
