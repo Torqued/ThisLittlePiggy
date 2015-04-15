@@ -15,8 +15,10 @@ public class howlWhenNightComes : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (dayCycle.isNightTime () && switched == false) {
-			switched=true;
-			source.PlayOneShot(howl);
+			switched = true;
+			source.PlayOneShot (howl);
+		}else if (!dayCycle.isNightTime () && switched == true) {
+			switched = false;
 		}
 	}
 }
