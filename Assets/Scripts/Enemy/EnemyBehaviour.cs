@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyBehaviour : MonoBehaviour {
+public class EnemyBehaviour : MonoBehaviour
+{
 
 	// variables for moving around
 	Transform transformer;
@@ -31,7 +32,6 @@ public class EnemyBehaviour : MonoBehaviour {
 	// variables to limit wolf wander range 
 	public int wander_radiusX = 20;
 	public int wander_radiusZ = 20;
-
 	NavMeshAgent agent2;
 
 	// Use this for initialization
@@ -41,13 +41,14 @@ public class EnemyBehaviour : MonoBehaviour {
 		transformer = GetComponent<Transform> ();
 		range = 5.0f;
 		if (wander) {
-			Wander();
+			Wander ();
 		}
-		agent2 = GetComponent<NavMeshAgent>();
+		agent2 = GetComponent<NavMeshAgent> ();
 
 	}
 
-	public void Wander () {
+	public void Wander ()
+	{
 		wander = true;
 		flee = false;
 		chase = false;
@@ -61,7 +62,8 @@ public class EnemyBehaviour : MonoBehaviour {
 		//agent2.SetDestination(target);
 	}
 
-	public void Flee(Transform goal) {
+	public void Flee (Transform goal)
+	{
 		wander = false; 
 		flee = true;
 		chase = false;
@@ -70,7 +72,8 @@ public class EnemyBehaviour : MonoBehaviour {
 		//agent2.SetDestination(target);
 	}
 
-	public void Chase(Vector3 player) {
+	public void Chase (Vector3 player)
+	{
 		wander = false;
 		flee = false; 
 		chase = true;
@@ -78,7 +81,6 @@ public class EnemyBehaviour : MonoBehaviour {
 		moveDirection = (target - transformer.position).normalized;
 		//agent2.SetDestination (player);
 	}
-
 	
 	void Move ()
 	{
@@ -97,14 +99,26 @@ public class EnemyBehaviour : MonoBehaviour {
 	
 	void  FixedUpdate ()
 	{   	
-
+		bool obstacle = false;
 
 		if (Vector3.Distance (transformer.position, target) > range) {
-			Move ();
+			// check if any obstacles in between target and wolf first
+			Vector3 direction = target - transform.position;
+			RaycastHit hit;
+			if (Physics.SphereCast (transform.position, 5.0f, 
+			                       direction.normalized, out hit, 15.0f)) {
+				if (hit.collider.gameObject.tag != "Player") {
+					obstacle = true;
+				}
+			} 
+			if (obstacle) 
+				target = GetTarget();
+			else 
+				Move ();
 		} else if (wander) {
 			target = GetTarget ();
 		} else if (flee) {
-			GameObject.Destroy(this.gameObject);
+			GameObject.Destroy (this.gameObject);
 		}
 		
 	}
@@ -129,7 +143,7 @@ public class EnemyBehaviour : MonoBehaviour {
 		if (check_sign_z > 0)
 			z_float *= -1.0f;
 		
-		Vector3 final_vector = new Vector3 (transformer.position.x - x_float, transform.position.y,transformer.position.z -  z_float);
+		Vector3 final_vector = new Vector3 (transformer.position.x - x_float, transform.position.y, transformer.position.z - z_float);
 		return final_vector;
 	}
 	
