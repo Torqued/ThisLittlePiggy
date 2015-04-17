@@ -26,7 +26,7 @@ public class EnemyClass : MonoBehaviour {
 	private SphereCollider col;
 	public bool playerInSight = false;
 	public float fieldOfViewAngle = 90f;
-
+	public float attackRadius = 30.0f;
 
 	private EnemyBehaviour behavior; 
 
@@ -63,7 +63,7 @@ public class EnemyClass : MonoBehaviour {
 		if(other.gameObject.tag == "Player") {
 			playerCurrentPos = other.transform.position;
 			detectPlayer();
-			
+
 		}
 	}
 
@@ -81,6 +81,7 @@ public class EnemyClass : MonoBehaviour {
 	void FixedUpdate() {
 		if (playerInSight && !behavior.flee) {
 			// if wolf sees player and not daytime, chase player
+			Debug.Log ("Chasing");
 			behavior.Chase(playerLastSighting);
 		}
 	}
@@ -93,14 +94,15 @@ public class EnemyClass : MonoBehaviour {
 		if(angle < fieldOfViewAngle * 0.5f) {
 			RaycastHit hit; //Send out a Raycast
 
-			if(Physics.SphereCast(transform.position + transform.up, 5.0f, 
-			                   direction.normalized, out hit, col.radius)) {
+			if(Physics.SphereCast(transform.position, 10.0f, 
+			                   direction.normalized, out hit, attackRadius*2)) {
 				if (hit.collider.gameObject.tag == "Player") {
 					playerInSight = true; //Spotted! Run!
 					//hash.playerSpotted = true;
 					playerLastSighting = playerCurrentPos;
 				}
 			}
+			Debug.DrawRay(transform.position,direction, Color.green);
 		}
 	}
 

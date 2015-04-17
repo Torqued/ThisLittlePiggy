@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyBehaviour : EnemyClass {
+public class EnemyBehaviour : MonoBehaviour {
 
 	// variables for moving around
 	Transform transformer;
@@ -32,7 +32,7 @@ public class EnemyBehaviour : EnemyClass {
 	public int wander_radiusX = 20;
 	public int wander_radiusZ = 20;
 
-	NavMeshAgent agent;
+	NavMeshAgent agent2;
 
 	// Use this for initialization
 	void Start ()
@@ -43,7 +43,7 @@ public class EnemyBehaviour : EnemyClass {
 		if (wander) {
 			Wander();
 		}
-		agent = GetComponent<NavMeshAgent>();
+		agent2 = GetComponent<NavMeshAgent>();
 
 	}
 
@@ -58,7 +58,7 @@ public class EnemyBehaviour : EnemyClass {
 		InvokeRepeating ("NewTarget", 0.01f, interval);
 		
 		moveDirection = (target - transformer.position).normalized;
-		//agent.SetDestination(target);
+		//agent2.SetDestination(target);
 	}
 
 	public void Flee(Transform goal) {
@@ -67,7 +67,7 @@ public class EnemyBehaviour : EnemyClass {
 		chase = false;
 		target = goal.position;
 		moveDirection = (target - transformer.position).normalized;
-		//agent.SetDestination(target);
+		//agent2.SetDestination(target);
 	}
 
 	public void Chase(Vector3 player) {
@@ -76,7 +76,7 @@ public class EnemyBehaviour : EnemyClass {
 		chase = true;
 		target = player;
 		moveDirection = (target - transformer.position).normalized;
-		//agent.SetDestination (player);
+		//agent2.SetDestination (player);
 	}
 
 	
