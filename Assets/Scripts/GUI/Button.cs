@@ -9,7 +9,6 @@ public class Button : MonoBehaviour {
 
     private bool lit;
     private bool pressed;
-    private bool needUpdate;
 
 	void Start () {
         icon_back = transform.Find("Icon_Back").gameObject;
@@ -23,25 +22,28 @@ public class Button : MonoBehaviour {
 	
     public void setLit() {
         lit = true;
-        needUpdate = true;
     }
 
     public void setPressed() {
         pressed = true;
-        needUpdate = true;
     }
 
-    public void onClick() {
+    public void buttonClicked() {
         Debug.Log("Clicked " + gameObject.name);
     }
 
     void LateUpdate() {
-        if (needUpdate) {
-            icon_back.SetActive(!(lit || pressed));
+        if (lit || pressed) {
+            icon_back.SetActive(false);
             icon_lit.SetActive(lit && !pressed);
             icon_pressed.SetActive(pressed);
 
-            needUpdate = lit = pressed = false;
+            lit = pressed = false;
+        }
+        else {
+            icon_back.SetActive(true);
+            icon_lit.SetActive(false);
+            icon_pressed.SetActive(false);
         }
     }
 }

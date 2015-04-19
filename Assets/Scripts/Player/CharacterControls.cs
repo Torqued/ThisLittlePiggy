@@ -251,7 +251,18 @@ public class CharacterControls : MonoBehaviour {
             Ray mouseRayGUI = guiCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
             
             if (Physics.Raycast(mouseRayGUI.origin, mouseRayGUI.direction, out collisionInfo, 100, 1<<9)) {
-                Debug.Log("Hello " + Time.time);
+                Button button = collisionInfo.collider.gameObject.GetComponent<Button>();
+
+                if (Input.GetMouseButton(0)) {
+                    button.setPressed();
+                }
+                else {
+                    button.setLit();
+                }
+
+                if (Input.GetMouseButtonUp(0)) {
+                    button.buttonClicked();
+                }
             }
             
             #endregion
