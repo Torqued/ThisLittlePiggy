@@ -35,11 +35,11 @@ public class CharacterControls : MonoBehaviour {
 
     #region Private Instance Variables
     private Animator characterAnimator;
-    private CameraControl cameraControl;
     private CharacterInventory inventory;
     private GameObject mainCamera;
     private GameObject characterModel;
     private GameObject gameController;
+    private GameObject guiCamera;
     private HUD_Movement inventoryMovement;
     private HashIds hash;
     private Item currentItem;
@@ -81,15 +81,20 @@ public class CharacterControls : MonoBehaviour {
         }
 
         characterModel = child.gameObject;
+        
+        if ((child = transform.Find("GUI Camera")) == null) {
+            Debug.LogError("This object is missing the child object \"GUI Camera\".");
+            Debug.Break();
+        }
+        guiCamera = child.gameObject;
 
-
-        if ((child = transform.Find("GUI Camera/Inventory")) == null) {
-            Debug.LogError("This object is missing the child object \"GUI Camera/Inventory\".");
+        if ((child = guiCamera.transform.Find("Inventory")) == null) {
+            Debug.LogError("The GUI Camera is missing a child object \"Inventory\".");
             Debug.Break();
         }
 
         if ((inventoryMovement = child.gameObject.GetComponent<HUD_Movement>()) == null) {
-            Debug.LogError("\"GUI Camera/Inventory\" must have a HUD_Movement component.");
+            Debug.LogError("\"Inventory\" must have a HUD_Movement component.");
             Debug.Break();
         }
 
@@ -232,25 +237,34 @@ public class CharacterControls : MonoBehaviour {
     }
     #endregion
 
-    #region Cast Mouse Ray for Highlighting Targets
+    #region Cast Mouse Ray for Highlighting Targets/GUI Interactions
     void castMouseRay() {
+        RaycastHit collisionInfo;
         Ray mouseRay;
 
-        if (cameraLocked) {
+        if (cameraLocked) { // Cast ray from mouse location
             Vector3 mousePosition = Input.mousePosition;
             mouseRay = mainCamera.GetComponent<Camera>().ScreenPointToRay(mousePosition);
             Debug.DrawRay(mouseRay.origin, 10 * mouseRay.direction, Color.cyan);
+            
+            #region GUI Interactions
+            Ray mouseRayGUI = guiCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
+            
+            if (Physics.Raycast(mouseRayGUI.origin, mouseRayGUI.direction, out collisionInfo, 100, 1<<9)) {
+                Debug.Log("Hello " + Time.time);
+            }
+            
+            #endregion
         }
-        else {
+        else { // Free look mode, cast ray from center of screen
             mouseRay = mainCamera.GetComponent<Camera>().ViewportPointToRay(new Vector3(0.5f, 0.5f));
             Debug.DrawRay(mainCamera.transform.position, 10*mainCamera.transform.forward, Color.green);
         }
-
-        RaycastHit collisionInfo;
-        if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out collisionInfo, 100)) {
+        if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out collisionInfo, 100, 1<<8)) {
             MouseTarget target;
             
             if((target = collisionInfo.transform.gameObject.GetComponent<MouseTarget>()) != null) {
+                Debug.Log("Target " + Time.time);
                 target.setOutline();
             }
         }
