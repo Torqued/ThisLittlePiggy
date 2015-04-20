@@ -18,7 +18,11 @@ public class HUD_Movement : MonoBehaviour {
         transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition, 0.2f);
 	}
 
-    public void toggleHUD() {
-        targetPosition = (inventoryOn = !inventoryOn) ? onPosition : offPosition;
+    public bool getState() {
+        return inventoryOn;
+    }
+
+    public void toggleHUD(bool on) {
+        targetPosition = (inventoryOn = on) ? onPosition : offPosition;
     }
 }
