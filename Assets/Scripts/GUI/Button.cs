@@ -7,6 +7,8 @@ public class Button : MonoBehaviour {
     GameObject icon_lit;
     GameObject icon_pressed;
 
+    _ButtonAction buttonAction;
+
     private bool lit;
     private bool pressed;
 
@@ -14,6 +16,8 @@ public class Button : MonoBehaviour {
         icon_back = transform.Find("Icon_Back").gameObject;
         icon_lit = transform.Find("Icon_Lit").gameObject;
         icon_pressed = transform.Find("Icon_Pressed").gameObject;
+
+        buttonAction = transform.Find("Button_Pressed").gameObject.GetComponent<_ButtonAction>();
         
         icon_back.SetActive(true);
         icon_lit.SetActive(false);
@@ -29,7 +33,7 @@ public class Button : MonoBehaviour {
     }
 
     public void buttonClicked() {
-        Debug.Log("Clicked " + gameObject.name);
+        buttonAction.buttonClicked();
     }
 
     void LateUpdate() {

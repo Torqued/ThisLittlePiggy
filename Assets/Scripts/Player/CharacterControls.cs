@@ -21,6 +21,11 @@ public class CameraSettings {
     public float minPitch, maxPitch;
     public float minZoom, maxZoom;
     public float sensitivity;
+
+    public Vector3 backViewLocation;
+    public float backViewHeight;
+    public Vector3 frontViewLocation;
+    public float frontViewHeight;
 }
 #endregion
 
@@ -39,8 +44,12 @@ public class CharacterControls : MonoBehaviour {
     private GameObject mainCamera;
     private GameObject characterModel;
     private GameObject gameController;
+    private GameObject ghostCamera_backView;
+    private GameObject ghostCamera_current;
+    private GameObject ghostCamera_frontView;
     private GameObject guiCamera;
     private HUD_Movement inventoryMovement;
+    private HUD_Movement craftingMovement;
     private HashIds hash;
     private Item currentItem;
     private Rigidbody rigidBody;
@@ -56,6 +65,7 @@ public class CharacterControls : MonoBehaviour {
     #endregion
 
     void Start() {
+        #region Initializing fields with error handling
         GameObject[] mainCameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
         if (mainCameras.Length != 1) {
@@ -97,6 +107,17 @@ public class CharacterControls : MonoBehaviour {
             Debug.LogError("\"Inventory\" must have a HUD_Movement component.");
             Debug.Break();
         }
+        
+        if ((child = guiCamera.transform.Find("Crafting")) == null) {
+            Debug.LogError("The GUI Camera is missing a child object \"Crafting\".");
+            Debug.Break();
+        }
+        
+        if ((craftingMovement = child.gameObject.GetComponent<HUD_Movement>()) == null) {
+            Debug.LogError("\"Crafting\" must have a HUD_Movement component.");
+            Debug.Break();
+        }
+
 
         if ((rigidBody = GetComponent<Rigidbody>()) == null) {
             Debug.LogError("There is no rigidbody attached to " + gameObject + ".");
@@ -107,6 +128,25 @@ public class CharacterControls : MonoBehaviour {
             Debug.LogError("There is no CharacterInventory script attached to " + gameObject + ".");
             Debug.Break();
         }
+        #endregion
+
+        #region Initializing Dummy Camera Objects
+        ghostCamera_backView = new GameObject("Back View");
+        ghostCamera_backView.transform.parent = transform;
+        ghostCamera_backView.transform.localPosition = cameraSettings.backViewLocation;
+        ghostCamera_backView.transform.LookAt(transform.position + Vector3.up * cameraSettings.backViewHeight);
+
+        ghostCamera_frontView = new GameObject("Front View");
+        ghostCamera_frontView.transform.parent = transform;
+        ghostCamera_frontView.transform.localPosition = cameraSettings.frontViewLocation;
+        ghostCamera_frontView.transform.LookAt(transform.position + Vector3.up * cameraSettings.frontViewHeight);
+
+        ghostCamera_current = new GameObject("Current View");
+        ghostCamera_current.transform.parent = transform;
+        ghostCamera_current.transform.localPosition = ghostCamera_backView.transform.localPosition;
+        ghostCamera_current.transform.localRotation = ghostCamera_backView.transform.localRotation;
+        #endregion
+
 
         yaw = transform.localEulerAngles.y;
         pitch = transform.localEulerAngles.x;
@@ -147,11 +187,6 @@ public class CharacterControls : MonoBehaviour {
     void Update() {
         checkKeyInputs();
         checkMouseInputs();
-        castMouseRay();
-    }
-
-    void OnApplicationFocus(bool focus) {
-        forward = wasForward = backward = wasBackward = strafeLeft = wasLeft = strafeRight = wasRight = false;
     }
 
     #region Keyboard Inputs
@@ -160,29 +195,38 @@ public class CharacterControls : MonoBehaviour {
             forward = wasForward = !(backward = false);
         }
         else if (Input.GetKeyUp(keySettings.forward)) {
-            forward = wasForward = false;
             backward = wasBackward;
         }
         if (Input.GetKeyDown(keySettings.back)) {
             backward = wasBackward = !(forward = false);
         }
         else if (Input.GetKeyUp(keySettings.back)) {
-            backward = wasBackward = false;
             forward = wasForward;
         }
         if (Input.GetKeyDown(keySettings.left)) {
             strafeLeft = wasLeft = !(strafeRight = false);
         }
         else if (Input.GetKeyUp(keySettings.left)) {
-            strafeLeft = wasLeft = false;
             strafeRight = wasRight;
         }
         if (Input.GetKeyDown(keySettings.right)) {
             strafeRight = wasRight = !(strafeLeft = false);
         }
         else if (Input.GetKeyUp(keySettings.right)) {
-            strafeRight = wasRight = false;
             strafeLeft = wasLeft;
+        }
+
+        if (!Input.GetKey(keySettings.forward)) {
+            forward = wasForward = false;
+        }
+        if (!Input.GetKey(keySettings.back)) {
+            backward = wasBackward = false;
+        }
+        if (!Input.GetKey(keySettings.left)) {
+            strafeLeft = wasLeft = false;
+        }
+        if (!Input.GetKey(keySettings.right)) {
+            strafeRight = wasRight = false;
         }
 
         if (Input.GetKeyDown(keySettings.guiMode)) {
@@ -190,15 +234,19 @@ public class CharacterControls : MonoBehaviour {
 
             if (cameraLocked) {
                 Cursor.lockState = CursorLockMode.None;
+                inventoryMovement.toggleHUD(true);
+                craftingMovement.toggleHUD(true);
             }
             else {
                 Cursor.lockState = CursorLockMode.Locked;
+                inventoryMovement.toggleHUD(false);
+                craftingMovement.toggleHUD(false);
             }
             Cursor.visible = cameraLocked;
         }
 
-        if (Input.GetKeyDown(keySettings.toggleHUD)) {
-            inventoryMovement.toggleHUD();
+        if (Input.GetKeyDown(keySettings.toggleHUD) && !cameraLocked) {
+            inventoryMovement.toggleHUD(!inventoryMovement.getState());
         }
 
         if (Input.GetKeyDown(keySettings.pause)) {
@@ -229,16 +277,15 @@ public class CharacterControls : MonoBehaviour {
                 cameraSettings.minZoom,
                 cameraSettings.maxZoom);
         }
-        else {
-
-        }
         
         transform.localEulerAngles = new Vector3(pitch, yaw, 0);
+        
+        castMouseRays();
     }
     #endregion
 
     #region Cast Mouse Ray for Highlighting Targets/GUI Interactions
-    void castMouseRay() {
+    void castMouseRays() {
         RaycastHit collisionInfo;
         Ray mouseRay;
 
@@ -264,7 +311,6 @@ public class CharacterControls : MonoBehaviour {
                     button.buttonClicked();
                 }
             }
-            
             #endregion
         }
         else { // Free look mode, cast ray from center of screen
@@ -275,7 +321,6 @@ public class CharacterControls : MonoBehaviour {
             MouseTarget target;
             
             if((target = collisionInfo.transform.gameObject.GetComponent<MouseTarget>()) != null) {
-                Debug.Log("Target " + Time.time);
                 target.setOutline();
             }
         }
