@@ -20,6 +20,7 @@ public class AIPath : MonoBehaviour
 		void Awake ()
 		{
 				move = this.GetComponent<AIMovement> ();
+				player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 		}
 
 		void Update ()
@@ -72,6 +73,13 @@ public class AIPath : MonoBehaviour
 						// change target of AI
 						move.targetPosition = path [pathPos];
 						move.targetPosition = new Vector3(move.targetPosition.x, transform.position.y, move.targetPosition.z);
+
+						// rotate towards next path point
+						Vector3 targetDir = move.targetPosition - transform.position;
+						float step = 100.0f * Time.deltaTime;
+						Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
+						Debug.DrawRay(transform.position, newDir, Color.red);
+						transform.rotation = Quaternion.LookRotation(newDir);
 						// increment the path pos once we are close enough to current path pos
 						var distance = Vector3.Distance (move.targetPosition, this.transform.position);
 						if (distance < move.speed / 4)
