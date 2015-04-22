@@ -72,14 +72,17 @@ public class EnemyClass : MonoBehaviour {
 		if(other.gameObject.tag == "Player") {
 			playerInSight = false; //They are no longer detected.
 			//hash.playerSpotted = false;
-			if (!behavior.flee) {
-				behavior.Wander();
-			}
+			//if (!behavior.flee) {
+				//behavior.Wander();
+			//}
 		}
 	}
 
 	void FixedUpdate() {
-		if (playerInSight && !behavior.flee) {
+		if (behavior.flee) {
+			playerInSight = false;
+		}
+		else if (playerInSight) {
 			// if wolf sees player and not daytime, chase player
 			Debug.Log ("Chasing");
 			behavior.Chase(playerLastSighting);
