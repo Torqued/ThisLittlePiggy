@@ -29,27 +29,27 @@ public class CraftingGui : MonoBehaviour {
 			GUI.Box(new Rect(0, 0, 250, 300), "Construction");
 		
 			// Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
-			if (GUI.Button(new Rect(10, 50, 150, 40), "Rope")){
-				CraftingRecipes.craft (Crafting.Rope, inventory);
-			}
+//			if (GUI.Button(new Rect(10, 50, 150, 40), "Rope")){
+//				CraftingRecipes.craft (Crafting.Rope, inventory);
+//			}
 			if (GUI.Button(new Rect(10, 100, 150, 40), "Straw House")) {
 				CraftingRecipes.craft (Crafting.HouseStraw, inventory);
 			}
-			if (GUI.Button(new Rect(170, 100, 70, 40), "Use Fairy")) {
-				CraftingRecipes.craftWithFairy (Crafting.HouseStraw, inventory);
-			}
+//			if (GUI.Button(new Rect(170, 100, 70, 40), "Use Fairy")) {
+//				CraftingRecipes.craftWithFairy (Crafting.HouseStraw, inventory);
+//			}
 			if (GUI.Button(new Rect(10, 150, 150, 40), "Stick House")) {
 				CraftingRecipes.craft (Crafting.HouseSticks, inventory);
 			}
-			if (GUI.Button(new Rect(170, 150, 70, 40), "Use Fairy")) {
-				CraftingRecipes.craftWithFairy (Crafting.HouseSticks, inventory);
-			}
+//			if (GUI.Button(new Rect(170, 150, 70, 40), "Use Fairy")) {
+//				CraftingRecipes.craftWithFairy (Crafting.HouseSticks, inventory);
+//			}
 			if (GUI.Button(new Rect(10, 200, 150, 40), "Brick House")) {
 				CraftingRecipes.craft (Crafting.HouseBricks, inventory);
 			}
-			if (GUI.Button(new Rect(170, 200, 70, 40), "Use Fairy")) {
-				CraftingRecipes.craftWithFairy (Crafting.HouseBricks, inventory);
-			}
+//			if (GUI.Button(new Rect(170, 200, 70, 40), "Use Fairy")) {
+//				CraftingRecipes.craftWithFairy (Crafting.HouseBricks, inventory);
+//			}
 			GUI.EndGroup();
 		}
 	}

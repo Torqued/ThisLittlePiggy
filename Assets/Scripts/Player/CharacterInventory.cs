@@ -9,7 +9,7 @@ public enum Crafting {
     HouseSticks,
     HouseStraw,
     //HouseWood,
-    Rope
+  //  Rope
 }
 
 
@@ -24,7 +24,7 @@ public static class CraftingRecipes {
         crafting[Crafting.HouseSticks] = new RecipeHouseSticks();
         crafting[Crafting.HouseStraw] = new RecipeHouseStraw();
         //crafting[Crafting.HouseWood] = new RecipeHouseWood();
-        crafting[Crafting.Rope] = new RecipeRope();
+        //crafting[Crafting.Rope] = new RecipeRope();
     }
 
     public static bool canCraft(Crafting craft, CharacterInventory i) {
@@ -39,24 +39,24 @@ public static class CraftingRecipes {
         return false;
     }
 
-	public static bool craftWithFairy(Crafting craft, CharacterInventory i) {
-		if (canCraft(craft, i)) {
-			crafting[craft].craftingResult(i);
-			return true;
-		}
-		return false;
-	}
+//	public static bool craftWithFairy(Crafting craft, CharacterInventory i) {
+//		if (canCraft(craft, i)) {
+//			crafting[craft].craftingResult(i);
+//			return true;
+//		}
+//		return false;
+//	}
     
     private interface ICraftingRecipe {
         bool canCraft(CharacterInventory i);
         void craftingResult(CharacterInventory i);
-		void craftingWithFairyResult (CharacterInventory i);
+		//void craftingWithFairyResult (CharacterInventory i);
     }
 
     #region Recipe Definitions
     private class RecipeHouseBricks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-			if (i.getAmount (ItemType.Bricks) >= 10 && i.getAmount(ItemType.Sticks) >= 4) {
+			if (i.getAmount (ItemType.Bricks) >= 10){// && i.getAmount(ItemType.Sticks) >= 4) {
 				return true;
 			}
 			return false;
@@ -69,13 +69,13 @@ public static class CraftingRecipes {
 			placeHouse (i);
         }
 
-		public void craftingWithFairyResult (CharacterInventory i){
-			i.removeItem (ItemType.Bricks, 8);
-			i.removeItem (ItemType.Sticks, 3);
-			i.removeItem(ItemType.Fairy, 1);
-			
-			placeHouse (i);
-		}
+//		public void craftingWithFairyResult (CharacterInventory i){
+//			i.removeItem (ItemType.Bricks, 8);
+//			i.removeItem (ItemType.Sticks, 3);
+//			i.removeItem(ItemType.Fairy, 1);
+//			
+//			placeHouse (i);
+//		}
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
@@ -87,7 +87,7 @@ public static class CraftingRecipes {
     
     private class RecipeHouseSticks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-			if (i.getAmount (ItemType.Rope) >= 4 && i.getAmount(ItemType.Sticks) >= 8) {
+			if (i.getAmount(ItemType.Sticks) >= 8) { //i.getAmount (ItemType.Rope) >= 4 && 
 				return true;
 			}
 			return false;
@@ -100,13 +100,13 @@ public static class CraftingRecipes {
 			placeHouse (i);
         }
 
-		public void craftingWithFairyResult (CharacterInventory i){
-			i.removeItem (ItemType.Rope, 3);
-			i.removeItem (ItemType.Sticks, 6);
-			i.removeItem(ItemType.Fairy, 1);
-			
-			placeHouse (i);
-		}
+//		public void craftingWithFairyResult (CharacterInventory i){
+//			i.removeItem (ItemType.Rope, 3);
+//			i.removeItem (ItemType.Sticks, 6);
+//			i.removeItem(ItemType.Fairy, 1);
+//			
+//			placeHouse (i);
+//		}
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
@@ -120,7 +120,7 @@ public static class CraftingRecipes {
 
     private class RecipeHouseStraw : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-			if (i.getAmount (ItemType.Straw) >= 5 && i.getAmount(ItemType.Rope) >= 2) {
+			if (i.getAmount (ItemType.Straw) >= 5){// && i.getAmount(ItemType.Rope) >= 2) {
 				return true;
 			}
 			return false;
@@ -133,13 +133,13 @@ public static class CraftingRecipes {
 			placeHouse (i);
         }
 
-		public void craftingWithFairyResult (CharacterInventory i){
-			i.removeItem(ItemType.Straw, 3);
-			i.removeItem(ItemType.Rope, 1);
-			i.removeItem(ItemType.Fairy, 1);
-			
-			placeHouse (i);
-		}
+//		public void craftingWithFairyResult (CharacterInventory i){
+//			i.removeItem(ItemType.Straw, 3);
+//			i.removeItem(ItemType.Rope, 1);
+//			i.removeItem(ItemType.Fairy, 1);
+//			
+//			placeHouse (i);
+//		}
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
@@ -149,22 +149,22 @@ public static class CraftingRecipes {
 		}
     }
 
-    private class RecipeRope : ICraftingRecipe {
-        public bool canCraft(CharacterInventory i) {
-            return i.getAmount(ItemType.Grass) >= 2;
-        }
-        
-        public void craftingResult(CharacterInventory i) {
-            i.removeItem(ItemType.Grass, 2);
-            i.addItem(ItemType.Rope);
-        }
-		public void craftingWithFairyResult (CharacterInventory i){
-		//No Recipe for rope with Fairy
-		}	
-
-
-
-    }
+//    private class RecipeRope : ICraftingRecipe {
+//        public bool canCraft(CharacterInventory i) {
+//            return i.getAmount(ItemType.Grass) >= 2;
+//        }
+//        
+//        public void craftingResult(CharacterInventory i) {
+//            i.removeItem(ItemType.Grass, 2);
+//            i.addItem(ItemType.Rope);
+//        }
+//		public void craftingWithFairyResult (CharacterInventory i){
+//		//No Recipe for rope with Fairy
+//		}	
+//
+//
+//
+//    }
     #endregion
 }
 #endregion
