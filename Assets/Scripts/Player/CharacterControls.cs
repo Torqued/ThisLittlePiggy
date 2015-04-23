@@ -12,20 +12,37 @@ public class KeySettings {
     public KeyCode toggleHUD = KeyCode.E;
     public KeyCode guiMode = KeyCode.Tab;
     public KeyCode pause = KeyCode.Escape;
+    public KeyCode cycleViewForward = KeyCode.X;
+    public KeyCode cycleViewBack = KeyCode.Z;
+}
+
+[System.Serializable]
+public class CameraView {
+    public string name;
+    public Vector3 view;
+    public float viewHeight;
+
+    private GameObject ghostCamera;
+
+    public void initCamera(Transform transform) {
+        ghostCamera = new GameObject(name);
+        ghostCamera.transform.localPosition = view;
+        ghostCamera.transform.LookAt(transform.position + Vector3.up * viewHeight);
+    }
+
+    public GameObject getCamera() {
+        return ghostCamera;
+    }
 }
 
 [System.Serializable]
 public class CameraSettings {
-    public Vector2 defaultCameraOffset;
-    public float cameraLookHeightOffset;
-    public float minPitch, maxPitch;
-    public float minZoom, maxZoom;
     public float sensitivity;
+    public CameraView[] views;
 
-    public Vector3 backViewLocation;
-    public float backViewHeight;
-    public Vector3 frontViewLocation;
-    public float frontViewHeight;
+    public GameObject getView(int i) {
+        return views[((i % views.Length + views.Length) + views.Length) % views.Length].getCamera();
+    }
 }
 #endregion
 
@@ -44,9 +61,8 @@ public class CharacterControls : MonoBehaviour {
     private GameObject mainCamera;
     private GameObject characterModel;
     private GameObject gameController;
-    private GameObject ghostCamera_backView;
     private GameObject ghostCamera_current;
-    private GameObject ghostCamera_frontView;
+    private GameObject ghostCamera_target;
     private GameObject guiCamera;
     private HUD_Movement inventoryMovement;
     private HUD_Movement craftingMovement;
@@ -60,8 +76,8 @@ public class CharacterControls : MonoBehaviour {
     private bool strafeLeft, wasLeft;
     private bool strafeRight, wasRight;
     private int enemyAggro;
-    private float yaw, pitch, cameraZoom, nextCameraZoom;
-    private float nextPlayerYaw;
+    private int cameraIndex;
+    private float playerYaw, nextPlayerYaw;
     #endregion
 
     void Start() {
@@ -131,27 +147,21 @@ public class CharacterControls : MonoBehaviour {
         #endregion
 
         #region Initializing Dummy Camera Objects
-        ghostCamera_backView = new GameObject("Back View");
-        ghostCamera_backView.transform.parent = transform;
-        ghostCamera_backView.transform.localPosition = cameraSettings.backViewLocation;
-        ghostCamera_backView.transform.LookAt(transform.position + Vector3.up * cameraSettings.backViewHeight);
 
-        ghostCamera_frontView = new GameObject("Front View");
-        ghostCamera_frontView.transform.parent = transform;
-        ghostCamera_frontView.transform.localPosition = cameraSettings.frontViewLocation;
-        ghostCamera_frontView.transform.LookAt(transform.position + Vector3.up * cameraSettings.frontViewHeight);
+        for (int i = 0; i < cameraSettings.views.Length; i++) {
+            cameraSettings.views[i].initCamera(transform);
+        }
 
+        ghostCamera_target = cameraSettings.getView(cameraIndex);
+        
         ghostCamera_current = new GameObject("Current View");
         ghostCamera_current.transform.parent = transform;
-        ghostCamera_current.transform.localPosition = ghostCamera_backView.transform.localPosition;
-        ghostCamera_current.transform.localRotation = ghostCamera_backView.transform.localRotation;
+        ghostCamera_current.transform.localPosition = ghostCamera_target.transform.localPosition;
+        ghostCamera_current.transform.localRotation = ghostCamera_target.transform.localRotation;
         #endregion
 
+        nextPlayerYaw = playerYaw = transform.localEulerAngles.y;
 
-        yaw = transform.localEulerAngles.y;
-        pitch = transform.localEulerAngles.x;
-
-        cameraZoom = nextCameraZoom = 1;
         Cursor.visible = cameraLocked = false;
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -249,6 +259,14 @@ public class CharacterControls : MonoBehaviour {
             inventoryMovement.toggleHUD(!inventoryMovement.getState());
         }
 
+        if (Input.GetKeyDown(keySettings.cycleViewForward)) {
+            ghostCamera_target = cameraSettings.getView(++cameraIndex);
+        }
+
+        if (Input.GetKeyDown(keySettings.cycleViewBack)) {
+            ghostCamera_target = cameraSettings.getView(--cameraIndex);
+        }
+
         if (Input.GetKeyDown(keySettings.pause)) {
             gamePaused = !gamePaused;
         }
@@ -265,20 +283,10 @@ public class CharacterControls : MonoBehaviour {
     #region Mouse Inputs
     private void checkMouseInputs() {
         if (!cameraLocked) {
-            float h = Input.GetAxis("Mouse X") * cameraSettings.sensitivity;
-            float v = Input.GetAxis("Mouse Y") * cameraSettings.sensitivity;
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-            yaw += h;
-            pitch = Mathf.Clamp(pitch - v, cameraSettings.minPitch, cameraSettings.maxPitch);
-
-            nextCameraZoom = Mathf.Clamp(
-                nextCameraZoom - scroll * 0.5f,
-                cameraSettings.minZoom,
-                cameraSettings.maxZoom);
+            playerYaw += Input.GetAxis("Mouse X") * cameraSettings.sensitivity;
         }
         
-        transform.localEulerAngles = new Vector3(pitch, yaw, 0);
+        transform.localEulerAngles = new Vector3(0, playerYaw, 0);
         
         castMouseRays();
     }
@@ -328,57 +336,28 @@ public class CharacterControls : MonoBehaviour {
     #endregion
 
     void LateUpdate() {
-        Vector3 cameraOffset = Vector3.up * cameraSettings.defaultCameraOffset.y +
-            transform.forward * cameraSettings.defaultCameraOffset.x;
+        updateCameraPosition();
+        updateAnimations();
+    }
 
-        // Zeno's Paradox (creates smooth zooming)
-        cameraZoom = Mathf.Lerp(cameraZoom, nextCameraZoom, 0.2f);
+    private void updateCameraPosition() {
 
-        Vector3 cameraPosition = transform.position + cameraOffset * cameraZoom + Vector3.up;
+        ghostCamera_current.transform.localPosition = Vector3.Lerp(
+            ghostCamera_current.transform.localPosition,
+            ghostCamera_target.transform.localPosition,
+            0.2f
+        );
+        ghostCamera_current.transform.localRotation = Quaternion.Lerp(
+            ghostCamera_current.transform.localRotation,
+            ghostCamera_target.transform.localRotation,
+            0.2f
+        );
 
-        #region Camera Collision
-        RaycastHit collisionInfo;
-        if (Physics.Raycast(transform.position, cameraOffset, out collisionInfo)) {
-            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
-                Vector3 collisionOffset = Vector3.zero;
-                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
-                    collisionOffset = Vector3.up;
-                }
-                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
-                }
-                else {
-                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
-                }
-            }
-        }
-        else if (Physics.Raycast(transform.position, cameraOffset + Vector3.up, out collisionInfo)) {
-            if (!collisionInfo.transform.gameObject.GetComponent<Collider>().isTrigger) {
-                Vector3 collisionOffset = Vector3.zero;
-                if (Vector3.Dot(collisionInfo.normal, Vector3.up) > 0) {
-                    collisionOffset = Vector3.up;
-                }
-                if ((cameraOffset * cameraZoom).sqrMagnitude > collisionInfo.distance * collisionInfo.distance) {
-                    cameraPosition = transform.position + Vector3.Normalize(cameraOffset) * (collisionInfo.distance) + collisionOffset;
-                }
-                else {
-                    cameraPosition = transform.position + cameraOffset * cameraZoom + collisionOffset;
-                }
-            }
-        }
-        #endregion
-
-        mainCamera.transform.position = cameraPosition;
-
+        mainCamera.transform.position = ghostCamera_current.transform.position;
+        mainCamera.transform.rotation = ghostCamera_current.transform.rotation;
+        
         Debug.DrawRay(transform.position, transform.forward * 10, Color.yellow);
         Debug.DrawRay(transform.position, mainCamera.transform.position - transform.position, Color.red);
-
-        // Force pitch to 0 so that the player doesn't bend up or down
-        transform.localEulerAngles = new Vector3(0, yaw, 0);
-
-        mainCamera.transform.LookAt(transform.position + cameraSettings.cameraLookHeightOffset * Vector3.up);
-
-        updateAnimations();
     }
 
     private void updateAnimations() {

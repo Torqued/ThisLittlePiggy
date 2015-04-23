@@ -41,7 +41,7 @@ public class EnemyBehaviour : MonoBehaviour
 		transformer = GetComponent<Transform> ();
 		range = 5.0f;
 		if (wander) {
-			Wander ();
+			//Wander ();
 		}
 		agent2 = GetComponent<NavMeshAgent> ();
 
@@ -91,8 +91,6 @@ public class EnemyBehaviour : MonoBehaviour
 		// using quarternions instead of euler angles in the end to avoid gimbal lock effect
 		var newRotation = Quaternion.LookRotation (moveDirection);
 		transform.rotation = Quaternion.Slerp (transform.rotation, newRotation, Time.deltaTime);
-
-		
 		transformer.position += transformer.forward * speed * Time.deltaTime;
 		
 	}

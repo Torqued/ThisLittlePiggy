@@ -3,9 +3,17 @@ using System.Collections;
 
 public class DayNightCycle : MonoBehaviour {
 
+    public Gradient lightColors;
+
+    private Light sun;
+
+    void Start () {
+        sun = transform.Find("Sun").gameObject.GetComponent<Light>();
+    }
+
+
 	void Update () {
-        float lightAngle = Time.time * 3;
-        transform.eulerAngles = new Vector3(lightAngle, 0, 0);
+        sun.color = lightColors.Evaluate(dayNightLerp());
 	}
 
     public float timeOfDay() {

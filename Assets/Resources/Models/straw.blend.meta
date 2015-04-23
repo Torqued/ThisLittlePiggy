@@ -13,10 +13,13 @@ ModelImporter:
     400004: Torus
     2300000: Cylinder_014
     2300002: Torus
+    2300004: //RootNode
     3300000: Cylinder_014
     3300002: Torus
+    3300004: //RootNode
     4300000: Cylinder_014
     4300002: Torus
+    4300004: Cylinder
     7400000: Default Take
     9500000: //RootNode
   materials:
