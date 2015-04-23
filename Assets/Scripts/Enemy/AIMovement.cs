@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic; 
 
 public class AIMovement : MonoBehaviour
 {
@@ -8,24 +9,38 @@ public class AIMovement : MonoBehaviour
 		public Vector3 targetPosition;
 		private Vector3 moveDirection = Vector3.zero;
 		float rotateSpeed = 1000.0f;
-		Animation _animation;
+		Animation animation;
 		public AnimationClip idleAnimation;
 		public AnimationClip runAnimation;
 
+		private AIPath path; 
+		Dictionary<string, AnimationState> states = new Dictionary<string, AnimationState>();
 		void Awake ()
 		{	
 				// give it an initial target position 
 				targetPosition = transform.position;
-				
-				_animation = this.GetComponent<Animation> ();
+				path = this.GetComponent<AIPath> ();
+				animation = this.GetComponent<Animation> ();
+				if (animation) {
+					foreach(AnimationState state in animation)
+					{
+					    states.Add(state.name, state);
+					}
+				}
 		}
 	
 		// Update is called once per frame
 		void Update ()
 		{	
-				if (Vector3.Distance (targetPosition, this.transform.position) <= 2.0f)
-						return;
+				if (path.player == null)
+					return;
 
+				if (Vector3.Distance (path.player.position, this.transform.position) <= 5.0f) {
+						path.stop = true;
+						return;
+				}
+
+				path.stop = false;
 
 				if (targetPosition != Vector3.zero) {
 						
@@ -37,14 +52,16 @@ public class AIMovement : MonoBehaviour
 				transform.position = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime);
 
 				// ANIMATION sector
-				if (_animation) {
-						if (Vector3.Distance (targetPosition, this.transform.position) > 1.0f) {
-								_animation [runAnimation.name].speed = 1.0f;
-								_animation.CrossFade (runAnimation.name);	
-				
+				if (animation) {
+						if (Vector3.Distance (path.player.position, this.transform.position) > 5.0f) {
+							states[runAnimation.name].speed = 2.0f;
+								//animation [runAnimation.name].speed = 1.0f;
+							animation.CrossFade (runAnimation.name);	
+			
 						} else {
-								_animation [idleAnimation.name].speed = 1.0f;
-								_animation.CrossFade (idleAnimation.name);
+							states[idleAnimation.name].speed = 1.0f;	
+							//animation [idleAnimation.name].speed = 1.0f;
+							animation.CrossFade (idleAnimation.name);
 						}
 				}
 		}

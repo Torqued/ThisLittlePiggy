@@ -62,7 +62,7 @@ public class EnemyClass : MonoBehaviour {
 	void OnTriggerStay(Collider other) {
 		if(other.gameObject.tag == "Player") {
 			playerCurrentPos = other.transform.position;
-			detectPlayer();
+			//detectPlayer();
 
 		}
 	}
@@ -71,21 +71,15 @@ public class EnemyClass : MonoBehaviour {
 		//If the player leaves the sensory collider
 		if(other.gameObject.tag == "Player") {
 			playerInSight = false; //They are no longer detected.
-			//hash.playerSpotted = false;
-			//if (!behavior.flee) {
-				//behavior.Wander();
-			//}
+			
 		}
 	}
 
 	void FixedUpdate() {
-		if (behavior.flee) {
-			playerInSight = false;
-		}
-		else if (playerInSight) {
+		if (playerInSight) {
 			// if wolf sees player and not daytime, chase player
 			Debug.Log ("Chasing");
-			behavior.Chase(playerLastSighting);
+			//behavior.Chase(playerLastSighting);
 		}
 	}
 
