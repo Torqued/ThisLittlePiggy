@@ -15,6 +15,7 @@ public class AIMovement : MonoBehaviour
 		public Animator animator;
 		public HashIds hash;
 
+		public float attackInterval = 2.0f;
 		void Awake ()
 		{	
 				// give it an initial target position 
@@ -35,7 +36,8 @@ public class AIMovement : MonoBehaviour
 				if (Vector3.Distance (path.player.position, this.transform.position) <= 5.0f) {
 						path.stop = true;
 						idleState();
-						path.player.gameObject.GetComponent<CharacterControls>().damageStamina(35.0f);
+						if (Time.time % attackInterval < 0.5)
+							path.player.gameObject.GetComponent<CharacterControls>().damageStamina(35.0f);
 						return;
 				}
 				else { chaseState();}
