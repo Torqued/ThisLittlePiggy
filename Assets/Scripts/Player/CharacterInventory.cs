@@ -176,7 +176,7 @@ public class CharacterInventory : MonoBehaviour {
     void Start() {
         inventory = new Dictionary<ItemType, int>();
         foreach (ItemType i in System.Enum.GetValues(typeof(ItemType))) {
-            inventory[i] = 10;
+            inventory[i] = 0;
         }
 
         display = new Dictionary<ItemType, TextMesh>();

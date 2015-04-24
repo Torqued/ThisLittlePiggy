@@ -17,7 +17,7 @@ public class Video : MonoBehaviour {
 
 	void Update(){
 		if (!movie.isPlaying) {
-			Application.LoadLevel("MAIN");
+			Application.LoadLevel("mainBeta");
 		}
 	}
 }

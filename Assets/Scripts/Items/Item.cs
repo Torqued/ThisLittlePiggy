@@ -18,7 +18,7 @@ public class Item : MonoBehaviour {
 			CharacterControls playerControls = collision.gameObject.GetComponent<CharacterControls>();
 			playerControls.addItem(this);
 			AudioSource.PlayClipAtPoint (Pickup, transform.position);
-			Object.Instantiate((Resources.Load("Effects/Poof", typeof(GameObject)) as GameObject), (transform.position - new Vector3(0,0,0)), Quaternion.identity);
+			Object.Instantiate((Resources.Load("Effects/Poof", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
             GameObject.Destroy(gameObject);
 		}
 	}
