@@ -9,36 +9,35 @@ public class AIMovement : MonoBehaviour
 		public Vector3 targetPosition;
 		private Vector3 moveDirection = Vector3.zero;
 		float rotateSpeed = 1000.0f;
-		Animation animation;
-		public AnimationClip idleAnimation;
-		public AnimationClip runAnimation;
 
 		private AIPath path; 
-		Dictionary<string, AnimationState> states = new Dictionary<string, AnimationState>();
+
+		public Animator animator;
+		public HashIds hash;
+
 		void Awake ()
 		{	
 				// give it an initial target position 
 				targetPosition = transform.position;
 				path = this.GetComponent<AIPath> ();
-				animation = this.GetComponent<Animation> ();
-				if (animation) {
-					foreach(AnimationState state in animation)
-					{
-					    states.Add(state.name, state);
-					}
-				}
+				
+				hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIds>();
+				animator = transform.Find("Model").gameObject.GetComponent<Animator>();
 		}
 	
 		// Update is called once per frame
 		void Update ()
 		{	
+
 				if (path.player == null)
 					return;
 
 				if (Vector3.Distance (path.player.position, this.transform.position) <= 5.0f) {
 						path.stop = true;
+						idleState();
 						return;
 				}
+				else { chaseState();}
 
 				path.stop = false;
 
@@ -51,18 +50,36 @@ public class AIMovement : MonoBehaviour
 				transform.rotation = Quaternion.LookRotation (moveDirection);
 				transform.position = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime);
 
-				// ANIMATION sector
-				if (animation) {
-						if (Vector3.Distance (path.player.position, this.transform.position) > 5.0f) {
-							states[runAnimation.name].speed = 2.0f;
-								//animation [runAnimation.name].speed = 1.0f;
-							animation.CrossFade (runAnimation.name);	
-			
-						} else {
-							states[idleAnimation.name].speed = 1.0f;	
-							//animation [idleAnimation.name].speed = 1.0f;
-							animation.CrossFade (idleAnimation.name);
-						}
-				}
 		}
+
+		void chaseState() {
+		animator.SetBool(hash.runningBool, true);
+		animator.SetBool(hash.idleBool, false);
+		//agent.SetDestination(playerLastSighting);
+		//agent.speed = enemySpeed;
+		}
+
+		void alertState() {
+			animator.SetBool(hash.idleBool, false);
+			animator.SetBool(hash.runningBool, false);
+			animator.SetBool(hash.alertBool, true);
+			//agent.speed = 0;
+		}
+
+		void idleState() {
+			animator.SetBool(hash.idleBool, true);
+			animator.SetBool(hash.runningBool, false);
+			//agent.speed = 0;
+		}
+
+		void attackState() {
+			animator.SetBool(hash.attackBool, true);
+			//What else should be done here?
+		}
+
+		void fleeState() {
+			animator.SetBool(hash.runningBool, true);
+			//agent.speed = enemySpeed;
+		}
+
 }

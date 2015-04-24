@@ -3,9 +3,12 @@ using System.Collections;
 
 public class DayNightGui : MonoBehaviour {
 
+    public Gradient baseColor;
+
     private DayNightCycle dayNightCycle;
     private GameObject day;
     private GameObject night;
+    private GameObject baseUI;
 
     void Start () {
         GameObject[] gameControllers = GameObject.FindGameObjectsWithTag("GameController");
@@ -32,6 +35,13 @@ public class DayNightGui : MonoBehaviour {
             Debug.Break();
         }
         night = child.gameObject;
+        
+        if ((child = transform.Find("Base_GUI")) == null) {
+            baseUI = null;
+        }
+        else {
+            baseUI = child.gameObject;
+        }
 	}
 	
 	// Update is called once per frame
@@ -44,5 +54,9 @@ public class DayNightGui : MonoBehaviour {
 
         day.GetComponent<Renderer>().material.color = dayColor;
         night.GetComponent<Renderer>().material.color = nightColor;
+
+        if (baseUI != null) {
+            baseUI.GetComponent<Renderer>().material.color = baseColor.Evaluate(dayNightCycle.dayNightLerp());
+        }
 	}
 }
