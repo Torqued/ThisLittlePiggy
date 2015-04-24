@@ -27,15 +27,17 @@ public class House : MonoBehaviour {
 		}
 		healthRate = 1.0f;
 		nextHp = 0.0f;
-		Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
+		Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), (transform.position - new Vector3(0,5,5)), Quaternion.identity);
 	}
 
 	void Update(){
 		if (constructing) {
-			if(currentHealth < maxHealth && (Time.time > nextHp))
+			if(currentHealth < maxHealth)
 			{
-				currentHealth += 1;
-				nextHp = Time.time + healthRate;
+				if(Time.time > nextHp){
+					currentHealth += 1;
+					nextHp = Time.time + healthRate;
+				}
 			}
 			else
 				constructing = false;
