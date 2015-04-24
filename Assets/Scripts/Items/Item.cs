@@ -16,14 +16,8 @@ public class Item : MonoBehaviour {
 	void OnTriggerEnter(Collider collision) {
 		if (collision.gameObject.tag == "Player") {
 			CharacterControls playerControls = collision.gameObject.GetComponent<CharacterControls>();
-			playerControls.setCurrentItem(this);
-		}
-	}
-
-	void OnTriggerExit(Collider collision) {
-		if (collision.gameObject.tag == "Player") {
-			CharacterControls playerControls = collision.gameObject.GetComponent<CharacterControls>();
-			playerControls.setCurrentItem(null);
+			playerControls.addItem(this);
+            GameObject.Destroy(gameObject);
 		}
 	}
 }
