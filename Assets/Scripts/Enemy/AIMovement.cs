@@ -17,6 +17,8 @@ public class AIMovement : MonoBehaviour
 
 		public float attackInterval = 2.0f;
 		public bool attackingHouse = false;
+		private House house; 
+
 		private float stopRange = 5.0f;
 		void Awake ()
 		{	
@@ -31,8 +33,21 @@ public class AIMovement : MonoBehaviour
 		// Update is called once per frame
 		void Update ()
 		{	
-				if (path.player == null || attackingHouse)
+				if (path.player == null)
 					return;
+
+				if (attackingHouse) {
+
+					if (Time.time % attackInterval < 0.5) 
+						if (house == null) {
+							// destroyed house
+							attackingHouse = false;
+							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
+						}
+						else 
+							house.DamageHouse();
+					return;
+				}
 
 				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 								stopRange = 7.5f;
@@ -66,17 +81,18 @@ public class AIMovement : MonoBehaviour
 
 		}
 
-		void OnTriggerStay(Collider other ) {
-			attackingHouse = true;
-			if (other.gameObject.tag == "House") {
-				if (Time.time % attackInterval < 0.5)
-					other.gameObject.GetComponent<House>().DamageHouse();
+		void OnTriggerEnter(Collider other ) {
+			
+			if (other.tag == "House") {
+				attackingHouse = true;
+				Debug.Log("gets here3");
+				house = other.gameObject.GetComponent<House>();
 			}
 		}
 
 
 		void OnTriggerExit(Collider other ) {
-			if (other.gameObject.tag == "House") 
+			if (other.tag == "House") 
 				attackingHouse = false;
 		}
 
