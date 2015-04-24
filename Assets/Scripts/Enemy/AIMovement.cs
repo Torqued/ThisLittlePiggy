@@ -38,7 +38,7 @@ public class AIMovement : MonoBehaviour
 
 				if (attackingHouse) {
 
-					if (Time.time % attackInterval < 0.5) 
+					if (Time.time % attackInterval < 0.5) {
 						if (house == null) {
 							// destroyed house
 							attackingHouse = false;
@@ -46,11 +46,12 @@ public class AIMovement : MonoBehaviour
 						}
 						else 
 							house.DamageHouse();
+					}
 					return;
 				}
 
 				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
-								stopRange = 7.5f;
+								stopRange = 10.0f;
 				}
 				else {
 					stopRange = 5.0f;

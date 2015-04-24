@@ -31,7 +31,7 @@ public class AIPath : MonoBehaviour
 			spawnPoint = target.position;
 		}
 
-		void Update ()
+		void FixedUpdate ()
 		{
 				// first check if AI has a target, if not then just return without doing anything
 				// the AI just stays there or moves towards cached target
@@ -62,7 +62,7 @@ public class AIPath : MonoBehaviour
 				float dist = Vector3.Distance(target, lastPosition);
 				
 
-				if (dist > 3.0f && valid) {
+				if (dist > 5.0f && valid) {
 						lastPosition = target;
 
 						List<Vector3> temp_path = BuildGrid.instance.AStarSearch (this.transform.position, target);
