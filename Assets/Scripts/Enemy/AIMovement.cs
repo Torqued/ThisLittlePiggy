@@ -31,7 +31,7 @@ public class AIMovement : MonoBehaviour
 		}
 	
 		// Update is called once per frame
-		void Update ()
+		void FixedUpdate ()
 		{	
 				if (path.player == null)
 					return;

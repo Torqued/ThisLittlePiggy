@@ -97,7 +97,7 @@ public class AIPath : MonoBehaviour
 						Vector3 targetDir = move.targetPosition - transform.position;
 						float step = 100.0f * Time.deltaTime;
 						Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-						Debug.DrawRay(transform.position, newDir, Color.red);
+						//Debug.DrawRay(transform.position, newDir, Color.red);
 						transform.rotation = Quaternion.LookRotation(newDir);
 
 						// increment the path pos once we are close enough to current path pos
