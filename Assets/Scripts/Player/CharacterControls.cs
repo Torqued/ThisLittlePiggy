@@ -51,6 +51,11 @@ public class CharacterControls : MonoBehaviour {
     #region Serializable Fields
     public float walkSpeed = 10;
     public float runSpeed = 15;
+    public float maxStamina = 100;
+    public float staminaDecay = 0.005f;
+    public float staminaRecovery = 0.05f;
+    public float staminaPenaltyPercent = 0.25f;
+    public float staminaSpeedPenalty = 0.7f;
     public KeySettings keySettings;
     public CameraSettings cameraSettings;
     #endregion
@@ -75,8 +80,10 @@ public class CharacterControls : MonoBehaviour {
     private bool backward, wasBackward;
     private bool strafeLeft, wasLeft;
     private bool strafeRight, wasRight;
+    private bool isResting;
     private int enemyAggro;
     private int cameraIndex;
+    private float playerStamina;
     private float playerYaw, nextPlayerYaw;
     #endregion
 
@@ -165,6 +172,8 @@ public class CharacterControls : MonoBehaviour {
         Cursor.visible = cameraLocked = false;
         Cursor.lockState = CursorLockMode.Locked;
 
+        playerStamina = maxStamina;
+
         //Animation
         hash = gameController.GetComponent<HashIds>();
         characterAnimator = characterModel.GetComponent<Animator>();
@@ -188,7 +197,8 @@ public class CharacterControls : MonoBehaviour {
             nextVelocity += Vector3.Cross(Vector3.up, transform.forward);
         }
 
-        nextVelocity = Vector3.Normalize(nextVelocity) * (enemyAggro > 0 ? runSpeed : walkSpeed);
+        nextVelocity = Vector3.Normalize(nextVelocity) * (enemyAggro > 0 ? runSpeed : walkSpeed) *
+            (playerStamina / maxStamina < staminaPenaltyPercent ? 0.7f : 1);
 
         rigidBody.velocity = new Vector3(nextVelocity.x, rigidBody.velocity.y, nextVelocity.z);
     }
@@ -197,6 +207,15 @@ public class CharacterControls : MonoBehaviour {
     void Update() {
         checkKeyInputs();
         checkMouseInputs();
+
+        if (isResting) {
+            playerStamina = Mathf.Clamp(playerStamina + staminaRecovery, 0, maxStamina);
+        }
+        else {
+            playerStamina = Mathf.Clamp(playerStamina - staminaDecay, 0, maxStamina);
+        }
+
+        Debug.Log(playerStamina);
     }
 
     #region Keyboard Inputs
@@ -406,5 +425,22 @@ public class CharacterControls : MonoBehaviour {
 
     public void decreaseAggro() {
         enemyAggro--;
+    }
+
+    public void setResting(bool b) {
+        isResting = b;
+    }
+
+    public void damageStamina(float amount) {
+        if (playerStamina <= 0.01) {
+            playerDeath();
+        }
+        else {
+            playerStamina = Mathf.Clamp(playerStamina - amount, 0, maxStamina);
+        }
+    }
+
+    private void playerDeath() {
+
     }
 }

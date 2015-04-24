@@ -3,21 +3,28 @@ using System.Collections;
 
 public class DayNightCycle : MonoBehaviour {
 
+    public float dayNightLength = 180; // Seconds
+
     public Gradient lightColors;
+    public Gradient skyColors;
 
     private Light sun;
+    private Camera mainCamera;
 
     void Start () {
         sun = transform.Find("Sun").gameObject.GetComponent<Light>();
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
     }
-
 
 	void Update () {
         sun.color = lightColors.Evaluate(dayNightLerp());
+        sun.intensity = Mathf.Clamp(dayNightLerp(), 0.1f, 1);
+
+        mainCamera.backgroundColor = skyColors.Evaluate(dayNightLerp());
 	}
 
     public float timeOfDay() {
-        return Time.time * 3 % 360 / 360;
+        return Time.time % dayNightLength / dayNightLength;
     }
 
     public int hourOfDay() {
