@@ -37,9 +37,12 @@ public class AIPath : MonoBehaviour
 				// the AI just stays there or moves towards cached target
 				if (player == null || stop || move.attackingHouse)
 						return; 
-				if (flee)
+
+				if (flee) {
 					setPath(spawnPoint);
-				else {
+					if (Vector3.Distance(transform.position, spawnPoint) < 3.0f)
+						GameObject.Destroy(transform.gameObject);
+				} else {
 					Vector3 playerPosition = player.position;
 					setPath(playerPosition);
 				}
