@@ -23,6 +23,7 @@ public class HUD_Movement : MonoBehaviour {
     }
 
     public void toggleHUD(bool on) {
-        targetPosition = (inventoryOn = on) ? onPosition : offPosition;
+		targetPosition = (inventoryOn = on) ? onPosition : offPosition;
+
     }
 }

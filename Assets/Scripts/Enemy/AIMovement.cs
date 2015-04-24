@@ -15,6 +15,11 @@ public class AIMovement : MonoBehaviour
 		public Animator animator;
 		public HashIds hash;
 
+		public float attackInterval = 2.0f;
+		public bool attackingHouse = false;
+		private House house; 
+
+		private float stopRange = 5.0f;
 		void Awake ()
 		{	
 				// give it an initial target position 
@@ -26,15 +31,40 @@ public class AIMovement : MonoBehaviour
 		}
 	
 		// Update is called once per frame
-		void Update ()
+		void FixedUpdate ()
 		{	
-
 				if (path.player == null)
 					return;
 
-				if (Vector3.Distance (path.player.position, this.transform.position) <= 5.0f) {
+				if (attackingHouse) {
+
+					if (Time.time % attackInterval < 0.5) {
+						if (house == null) {
+							// destroyed house
+							attackingHouse = false;
+							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
+						}
+						else 
+							house.DamageHouse();
+					}
+					return;
+				}
+
+				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
+								stopRange = 10.0f;
+				}
+				else {
+					stopRange = 5.0f;
+				}
+
+				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
 						path.stop = true;
 						idleState();
+						if (Time.time % attackInterval < 0.5) {
+						// if player is outside house, then attack house
+							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
+								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(35.0f);
+						}
 						return;
 				}
 				else { chaseState();}
@@ -50,6 +80,21 @@ public class AIMovement : MonoBehaviour
 				transform.rotation = Quaternion.LookRotation (moveDirection);
 				transform.position = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime);
 
+		}
+
+		void OnTriggerEnter(Collider other ) {
+			
+			if (other.tag == "House") {
+				attackingHouse = true;
+				Debug.Log("gets here3");
+				house = other.gameObject.GetComponent<House>();
+			}
+		}
+
+
+		void OnTriggerExit(Collider other ) {
+			if (other.tag == "House") 
+				attackingHouse = false;
 		}
 
 		void chaseState() {

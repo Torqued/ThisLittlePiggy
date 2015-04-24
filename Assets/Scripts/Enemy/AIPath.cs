@@ -23,7 +23,7 @@ public class AIPath : MonoBehaviour
 		{
 				move = this.GetComponent<AIMovement> ();
 				player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-				lastPosition = Vector3.zero;
+				lastPosition = transform.position;
 		}
 
 		public void Flee(Transform target) {
@@ -31,15 +31,18 @@ public class AIPath : MonoBehaviour
 			spawnPoint = target.position;
 		}
 
-		void Update ()
+		void FixedUpdate ()
 		{
 				// first check if AI has a target, if not then just return without doing anything
 				// the AI just stays there or moves towards cached target
-				if (player == null || stop)
+				if (player == null || stop || move.attackingHouse)
 						return; 
-				if (flee)
+
+				if (flee) {
 					setPath(spawnPoint);
-				else {
+					if (Vector3.Distance(transform.position, spawnPoint) < 3.0f)
+						GameObject.Destroy(transform.gameObject);
+				} else {
 					Vector3 playerPosition = player.position;
 					setPath(playerPosition);
 				}
@@ -57,8 +60,9 @@ public class AIPath : MonoBehaviour
 				// now, we only make changes to the AI's movement if the player has moved and is on a walkable cell
 				// that means if the new player position is different from the last position
 				float dist = Vector3.Distance(target, lastPosition);
-				if (dist > 3.0f && valid) {
-			
+				
+
+				if (dist > 5.0f && valid) {
 						lastPosition = target;
 
 						List<Vector3> temp_path = BuildGrid.instance.AStarSearch (this.transform.position, target);
@@ -93,7 +97,7 @@ public class AIPath : MonoBehaviour
 						Vector3 targetDir = move.targetPosition - transform.position;
 						float step = 100.0f * Time.deltaTime;
 						Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-						Debug.DrawRay(transform.position, newDir, Color.red);
+						//Debug.DrawRay(transform.position, newDir, Color.red);
 						transform.rotation = Quaternion.LookRotation(newDir);
 
 						// increment the path pos once we are close enough to current path pos

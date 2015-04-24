@@ -61,7 +61,7 @@ public class BuildGrid : MonoBehaviour
 				// Get the position for a ray
 				var center = topLeftCorner + new Vector3 (x * cellSize, 0, y * cellSize) + new Vector3 (0.5f * cellSize, 0, 0.5f * cellSize);
 								
-				Debug.DrawRay (center, Vector3.up, Color.green);
+				//Debug.DrawRay (center, Vector3.up, Color.green);
 				/*
 								// generate 4 random rays out of topleft square of cell 
 								for (var i = 0; i < 4; i++) {

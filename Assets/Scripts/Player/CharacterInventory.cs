@@ -87,15 +87,15 @@ public static class CraftingRecipes {
     
     private class RecipeHouseSticks : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-			if (i.getAmount(ItemType.Sticks) >= 8) { //i.getAmount (ItemType.Rope) >= 4 && 
+			if (i.getAmount(ItemType.Sticks) >= 12) { //i.getAmount (ItemType.Rope) >= 4 && 
 				return true;
 			}
 			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
-			i.removeItem (ItemType.Rope, 4);
-			i.removeItem (ItemType.Sticks, 8);
+			//i.removeItem (ItemType.Rope, 4);
+			i.removeItem (ItemType.Sticks, 12);
 
 			placeHouse (i);
         }
@@ -120,15 +120,15 @@ public static class CraftingRecipes {
 
     private class RecipeHouseStraw : ICraftingRecipe {
         public bool canCraft(CharacterInventory i) {
-			if (i.getAmount (ItemType.Straw) >= 5){// && i.getAmount(ItemType.Rope) >= 2) {
+			if (i.getAmount (ItemType.Straw) >= 8){// && i.getAmount(ItemType.Rope) >= 2) {
 				return true;
 			}
 			return false;
         }
         
         public void craftingResult(CharacterInventory i) {
-            i.removeItem(ItemType.Straw, 5);
-            i.removeItem(ItemType.Rope, 2);
+            i.removeItem(ItemType.Straw, 8);
+            //i.removeItem(ItemType.Rope, 2);
 
 			placeHouse (i);
         }

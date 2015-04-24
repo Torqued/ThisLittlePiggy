@@ -311,7 +311,7 @@ public class CharacterControls : MonoBehaviour {
         if (cameraLocked) { // Cast ray from mouse location
             Vector3 mousePosition = Input.mousePosition;
             mouseRay = mainCamera.GetComponent<Camera>().ScreenPointToRay(mousePosition);
-            Debug.DrawRay(mouseRay.origin, 10 * mouseRay.direction, Color.cyan);
+            //Debug.DrawRay(mouseRay.origin, 10 * mouseRay.direction, Color.cyan);
             
             #region GUI Interactions
             Ray mouseRayGUI = guiCamera.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
@@ -334,7 +334,7 @@ public class CharacterControls : MonoBehaviour {
         }
         else { // Free look mode, cast ray from center of screen
             mouseRay = mainCamera.GetComponent<Camera>().ViewportPointToRay(new Vector3(0.5f, 0.5f));
-            Debug.DrawRay(mainCamera.transform.position, 10*mainCamera.transform.forward, Color.green);
+            //Debug.DrawRay(mainCamera.transform.position, 10*mainCamera.transform.forward, Color.green);
         }
         if (Physics.Raycast(mouseRay.origin, mouseRay.direction, out collisionInfo, 100, 1<<8)) {
             MouseTarget target;
@@ -367,8 +367,8 @@ public class CharacterControls : MonoBehaviour {
         mainCamera.transform.position = ghostCamera_current.transform.position;
         mainCamera.transform.rotation = ghostCamera_current.transform.rotation;
         
-        Debug.DrawRay(transform.position, transform.forward * 10, Color.yellow);
-        Debug.DrawRay(transform.position, mainCamera.transform.position - transform.position, Color.red);
+        //Debug.DrawRay(transform.position, transform.forward * 10, Color.yellow);
+        //Debug.DrawRay(transform.position, mainCamera.transform.position - transform.position, Color.red);
     }
 
     private void updateAnimations() {
@@ -423,6 +423,10 @@ public class CharacterControls : MonoBehaviour {
         isResting = b;
     }
 
+    public bool getResting() {
+        return this.isResting;
+    }
+
     public void damageStamina(float amount) {
         if (playerStamina <= 0.01) {
             playerDeath();
@@ -433,7 +437,7 @@ public class CharacterControls : MonoBehaviour {
     }
 
     private void playerDeath() {
-
+		Application.LoadLevel("Death");
     }
 
     public float getStaminaPercent() {
