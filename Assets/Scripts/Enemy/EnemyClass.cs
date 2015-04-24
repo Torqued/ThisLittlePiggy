@@ -107,21 +107,21 @@ public class EnemyClass : MonoBehaviour {
 	void chaseState() {
 		animator.SetBool(hash.runningBool, true);
 		animator.SetBool(hash.idleBool, false);
-		agent.SetDestination(playerLastSighting);
-		agent.speed = enemySpeed;
+		//agent.SetDestination(playerLastSighting);
+		//agent.speed = enemySpeed;
 	}
 
 	void alertState() {
 		animator.SetBool(hash.idleBool, false);
 		animator.SetBool(hash.runningBool, false);
 		animator.SetBool(hash.alertBool, true);
-		agent.speed = 0;
+		//agent.speed = 0;
 	}
 
 	void idleState() {
 		animator.SetBool(hash.idleBool, true);
 		animator.SetBool(hash.runningBool, false);
-		agent.speed = 0;
+		//agent.speed = 0;
 	}
 
 	void attackState() {
@@ -131,7 +131,7 @@ public class EnemyClass : MonoBehaviour {
 
 	void fleeState() {
 		animator.SetBool(hash.runningBool, true);
-		agent.speed = enemySpeed;
+		//agent.speed = enemySpeed;
 	}
 
 
