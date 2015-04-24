@@ -422,6 +422,10 @@ public class CharacterControls : MonoBehaviour {
         isResting = b;
     }
 
+    public bool getResting() {
+        return this.isResting;
+    }
+
     public void damageStamina(float amount) {
         if (playerStamina <= 0.01) {
             playerDeath();

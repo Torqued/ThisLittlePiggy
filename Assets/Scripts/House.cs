@@ -46,10 +46,25 @@ public class House : MonoBehaviour {
 	}
 
 	public void DamageHouse(){
-		currentHealth -= 10;
+		currentHealth -= 30;
 		if (currentHealth <= 0) {
 			Destroy(gameObject);
 		}
+	}
+
+	void OnTriggerEnter(Collider other) {
+		if (other.gameObject.tag == "Player") {
+			other.gameObject.GetComponent<CharacterControls>().setResting(true);
+			Debug.Log("resting");
+		}
+
+	}
+
+	void OnTriggerExit(Collider other) {
+		if (other.gameObject.tag == "Player") {
+			other.gameObject.GetComponent<CharacterControls>().setResting(false);
+		}
+
 	}
 
 }

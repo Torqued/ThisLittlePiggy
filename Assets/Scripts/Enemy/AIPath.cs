@@ -35,7 +35,7 @@ public class AIPath : MonoBehaviour
 		{
 				// first check if AI has a target, if not then just return without doing anything
 				// the AI just stays there or moves towards cached target
-				if (player == null || stop)
+				if (player == null || stop || move.attackingHouse)
 						return; 
 				if (flee)
 					setPath(spawnPoint);
@@ -57,10 +57,9 @@ public class AIPath : MonoBehaviour
 				// now, we only make changes to the AI's movement if the player has moved and is on a walkable cell
 				// that means if the new player position is different from the last position
 				float dist = Vector3.Distance(target, lastPosition);
-				Debug.Log(dist);
+				
 
 				if (dist > 3.0f && valid) {
-						Debug.Log("gets here");
 						lastPosition = target;
 
 						List<Vector3> temp_path = BuildGrid.instance.AStarSearch (this.transform.position, target);

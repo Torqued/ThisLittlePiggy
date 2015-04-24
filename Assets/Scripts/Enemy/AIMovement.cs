@@ -16,6 +16,8 @@ public class AIMovement : MonoBehaviour
 		public HashIds hash;
 
 		public float attackInterval = 2.0f;
+		public bool attackingHouse = false;
+		private float stopRange = 5.0f;
 		void Awake ()
 		{	
 				// give it an initial target position 
@@ -29,15 +31,24 @@ public class AIMovement : MonoBehaviour
 		// Update is called once per frame
 		void Update ()
 		{	
-
-				if (path.player == null)
+				if (path.player == null || attackingHouse)
 					return;
 
-				if (Vector3.Distance (path.player.position, this.transform.position) <= 5.0f) {
+				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
+								stopRange = 7.5f;
+				}
+				else {
+					stopRange = 5.0f;
+				}
+
+				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
 						path.stop = true;
 						idleState();
-						if (Time.time % attackInterval < 0.5)
-							path.player.gameObject.GetComponent<CharacterControls>().damageStamina(35.0f);
+						if (Time.time % attackInterval < 0.5) {
+						// if player is outside house, then attack house
+							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
+								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(35.0f);
+						}
 						return;
 				}
 				else { chaseState();}
@@ -53,6 +64,20 @@ public class AIMovement : MonoBehaviour
 				transform.rotation = Quaternion.LookRotation (moveDirection);
 				transform.position = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime);
 
+		}
+
+		void OnTriggerStay(Collider other ) {
+			attackingHouse = true;
+			if (other.gameObject.tag == "House") {
+				if (Time.time % attackInterval < 0.5)
+					other.gameObject.GetComponent<House>().DamageHouse();
+			}
+		}
+
+
+		void OnTriggerExit(Collider other ) {
+			if (other.gameObject.tag == "House") 
+				attackingHouse = false;
 		}
 
 		void chaseState() {
