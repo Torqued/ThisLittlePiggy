@@ -35,6 +35,7 @@ public class AIMovement : MonoBehaviour
 				if (Vector3.Distance (path.player.position, this.transform.position) <= 5.0f) {
 						path.stop = true;
 						idleState();
+						path.player.gameObject.GetComponent<CharacterControls>().damageStamina(35.0f);
 						return;
 				}
 				else { chaseState();}

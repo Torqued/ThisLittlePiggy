@@ -23,7 +23,7 @@ public class AIPath : MonoBehaviour
 		{
 				move = this.GetComponent<AIMovement> ();
 				player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-				lastPosition = Vector3.zero;
+				lastPosition = transform.position;
 		}
 
 		public void Flee(Transform target) {
@@ -57,8 +57,10 @@ public class AIPath : MonoBehaviour
 				// now, we only make changes to the AI's movement if the player has moved and is on a walkable cell
 				// that means if the new player position is different from the last position
 				float dist = Vector3.Distance(target, lastPosition);
+				Debug.Log(dist);
+
 				if (dist > 3.0f && valid) {
-			
+						Debug.Log("gets here");
 						lastPosition = target;
 
 						List<Vector3> temp_path = BuildGrid.instance.AStarSearch (this.transform.position, target);
