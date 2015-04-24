@@ -62,7 +62,7 @@ public class EnemyClass : MonoBehaviour {
 	void OnTriggerStay(Collider other) {
 		if(other.gameObject.tag == "Player") {
 			playerCurrentPos = other.transform.position;
-			detectPlayer();
+			//detectPlayer();
 
 		}
 	}
@@ -71,21 +71,15 @@ public class EnemyClass : MonoBehaviour {
 		//If the player leaves the sensory collider
 		if(other.gameObject.tag == "Player") {
 			playerInSight = false; //They are no longer detected.
-			//hash.playerSpotted = false;
-			//if (!behavior.flee) {
-				//behavior.Wander();
-			//}
+			
 		}
 	}
 
 	void FixedUpdate() {
-		if (behavior.flee) {
-			playerInSight = false;
-		}
-		else if (playerInSight) {
+		if (playerInSight) {
 			// if wolf sees player and not daytime, chase player
 			Debug.Log ("Chasing");
-			behavior.Chase(playerLastSighting);
+			//behavior.Chase(playerLastSighting);
 		}
 	}
 
@@ -113,21 +107,21 @@ public class EnemyClass : MonoBehaviour {
 	void chaseState() {
 		animator.SetBool(hash.runningBool, true);
 		animator.SetBool(hash.idleBool, false);
-		agent.SetDestination(playerLastSighting);
-		agent.speed = enemySpeed;
+		//agent.SetDestination(playerLastSighting);
+		//agent.speed = enemySpeed;
 	}
 
 	void alertState() {
 		animator.SetBool(hash.idleBool, false);
 		animator.SetBool(hash.runningBool, false);
 		animator.SetBool(hash.alertBool, true);
-		agent.speed = 0;
+		//agent.speed = 0;
 	}
 
 	void idleState() {
 		animator.SetBool(hash.idleBool, true);
 		animator.SetBool(hash.runningBool, false);
-		agent.speed = 0;
+		//agent.speed = 0;
 	}
 
 	void attackState() {
@@ -137,7 +131,7 @@ public class EnemyClass : MonoBehaviour {
 
 	void fleeState() {
 		animator.SetBool(hash.runningBool, true);
-		agent.speed = enemySpeed;
+		//agent.speed = enemySpeed;
 	}
 
 
