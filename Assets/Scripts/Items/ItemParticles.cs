@@ -5,8 +5,8 @@ public class ItemParticles : MonoBehaviour {
 
 	public AudioClip Pickup;
 
-	void OnDestroy(){
+	public void OnPickup(){
 		AudioSource.PlayClipAtPoint (Pickup, transform.position);
-		Object.Instantiate((Resources.Load("Effects/CFX_SmokePuffs", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
+		Object.Instantiate((Resources.Load("Effects/Poof", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
 	}
 }

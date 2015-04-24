@@ -18,15 +18,16 @@ public class House : MonoBehaviour {
 
 	void Start(){
 		constructing = true;
-		if (houseType == HouseType.Bricks) {
+		if (houseType == HouseType.Straw) {
 			maxHealth = 100;
 		} else if (houseType == HouseType.Sticks) {
 			maxHealth = 150;
-		} else if (houseType == HouseType.Straw) {
+		} else if (houseType == HouseType.Bricks) {
 			maxHealth = 1000;
 		}
 		healthRate = 1.0f;
 		nextHp = 0.0f;
+		Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
 	}
 
 	void Update(){
