@@ -287,13 +287,6 @@ public class CharacterControls : MonoBehaviour {
         if (Input.GetKeyDown(keySettings.pause)) {
             gamePaused = !gamePaused;
         }
-
-        if (Input.GetKeyDown(keySettings.interact)) {
-            if (currentItem != null) {
-                inventory.addItem(currentItem.itemType);
-                GameObject.Destroy(currentItem.gameObject);
-            }
-        }
     }
     #endregion
 
@@ -413,8 +406,8 @@ public class CharacterControls : MonoBehaviour {
         #endregion
     }
 
-    public void setCurrentItem(Item item) {
-        currentItem = item;
+    public void addItem(Item item) {
+        inventory.addItem(item.itemType);
     }
 
     public void increaseAggro() {
