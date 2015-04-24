@@ -432,7 +432,7 @@ public class CharacterControls : MonoBehaviour {
     }
 
     private void playerDeath() {
-
+		Application.LoadLevel("Death");
     }
 
     public float getStaminaPercent() {
