@@ -177,6 +177,7 @@ public class CharacterControls : MonoBehaviour {
         //Animation
         hash = gameController.GetComponent<HashIds>();
         characterAnimator = characterModel.GetComponent<Animator>();
+
     }
 
     #region Player Movement
