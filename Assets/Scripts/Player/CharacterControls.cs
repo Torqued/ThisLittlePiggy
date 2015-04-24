@@ -214,8 +214,6 @@ public class CharacterControls : MonoBehaviour {
         else {
             playerStamina = Mathf.Clamp(playerStamina - staminaDecay, 0, maxStamina);
         }
-
-        Debug.Log(playerStamina);
     }
 
     #region Keyboard Inputs
@@ -442,5 +440,9 @@ public class CharacterControls : MonoBehaviour {
 
     private void playerDeath() {
 
+    }
+
+    public float getStaminaPercent() {
+        return playerStamina / maxStamina;
     }
 }
