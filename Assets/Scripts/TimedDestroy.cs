@@ -13,7 +13,7 @@ public class TimedDestroy : MonoBehaviour {
 
 		timer++;
 
-		if(timer >= destroyTime) Destroy (this.gameObject);
+		if(timer >= destroyTime) Destroy (gameObject);
 	
 	}
 }
