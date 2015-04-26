@@ -48,6 +48,7 @@ public class AIPath : MonoBehaviour
 				}
 		}
 
+	
 		void setPath(Vector3 target) {
 			// check if player position is on a walkable cell. If it is not, then ai characters just move 
 				// towards last cached valid destination
@@ -92,13 +93,6 @@ public class AIPath : MonoBehaviour
 						// change target of AI
 						move.targetPosition = path [pathPos];
 						move.targetPosition = new Vector3(move.targetPosition.x, transform.position.y, move.targetPosition.z);
-
-						// rotate towards next path point
-						Vector3 targetDir = move.targetPosition - transform.position;
-						float step = 100.0f * Time.deltaTime;
-						Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-						//Debug.DrawRay(transform.position, newDir, Color.red);
-						transform.rotation = Quaternion.LookRotation(newDir);
 
 						// increment the path pos once we are close enough to current path pos
 						var distance = Vector3.Distance (move.targetPosition, this.transform.position);
