@@ -33,14 +33,17 @@ public class AIMovement : MonoBehaviour
 				
 				hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIds>();
 				animator = transform.Find("Model").gameObject.GetComponent<Animator>();
+				//howlState();
 		}
 	
 		// Update is called once per frame
 		void FixedUpdate ()
 		{	
+				// check if there is a player 
 				if (path.player == null)
 					return;
 
+				// check if wolf is attacking house, if so then don't run pathfinding code
 				if (attackingHouse) {
 
 					if (Time.time % attackInterval < 0.5) {
@@ -55,6 +58,7 @@ public class AIMovement : MonoBehaviour
 					return;
 				}
 
+				// if pig inside house, then increase the distance from the pig at which the wolf stops
 				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 								stopRange = 10.0f;
 				}
@@ -62,32 +66,41 @@ public class AIMovement : MonoBehaviour
 					stopRange = 5.0f;
 				}
 
+
+				// if wolf within stoprange distance of its target, then stop moving and start attacking
 				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
 						path.stop = true;
 						idleState();
 						if (Time.time % attackInterval < 0.5) {
 						// if player is outside house, then attack house
 							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
-								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(35.0f);
+								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(10.0f);
 						}
 						return;
 				}
 				else { chaseState();}
 
+
 				path.stop = false;
 
 
+				// actual rotation and translation code 
 				if (targetPosition != Vector3.zero) {
 						
 					// rotate towards next path point
 					//find the vector pointing from our position to the target
 			        _direction = (targetPosition - transform.position).normalized;
 			 
-			        //create the rotation we need to be in to look at the target
-			        _lookRotation = Quaternion.LookRotation(_direction);
+			       
+			        if (_direction == Vector3.zero)
+			        	;
+			        else {
+			        	 //create the rotation we need to be in to look at the target
+			        	_lookRotation = Quaternion.LookRotation(_direction);
 			 
-			        //rotate us over time according to speed until we are in the required rotation
-			        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+				        //rotation over time according to speed until we are in the required rotation
+				        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+				    }
 						
 				}
 				transform.position = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime);
@@ -98,7 +111,6 @@ public class AIMovement : MonoBehaviour
 			
 			if (other.tag == "House") {
 				attackingHouse = true;
-				Debug.Log("gets here3");
 				house = other.gameObject.GetComponent<House>();
 			}
 		}
@@ -109,32 +121,32 @@ public class AIMovement : MonoBehaviour
 				attackingHouse = false;
 		}
 
-		void chaseState() {
+		public void chaseState() {
 		animator.SetBool(hash.runningBool, true);
 		animator.SetBool(hash.idleBool, false);
 		//agent.SetDestination(playerLastSighting);
 		//agent.speed = enemySpeed;
 		}
 
-		void alertState() {
+		public void alertState() {
 			animator.SetBool(hash.idleBool, false);
 			animator.SetBool(hash.runningBool, false);
 			animator.SetBool(hash.alertBool, true);
 			//agent.speed = 0;
 		}
 
-		void idleState() {
+		public void idleState() {
 			animator.SetBool(hash.idleBool, true);
 			animator.SetBool(hash.runningBool, false);
 			//agent.speed = 0;
 		}
 
-		void attackState() {
+		public void attackState() {
 			animator.SetBool(hash.attackBool, true);
 			//What else should be done here?
 		}
 
-		void fleeState() {
+		public void fleeState() {
 			animator.SetBool(hash.runningBool, true);
 			//agent.speed = enemySpeed;
 		}

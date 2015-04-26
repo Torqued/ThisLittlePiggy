@@ -282,11 +282,11 @@ public class BuildGrid : MonoBehaviour
 		if (grid == null) 
 			makeGrid ();
 				
-		
 		//Start and end in grid coordinates
 		var start = Convert3DTo2DCoordinates (startPosition);
 		var end = Convert3DTo2DCoordinates (endPosition);
-				
+				Debug.Log(end.x);
+				Debug.Log(end.y);
 		// the set of nodes already evaluatated
 		var closedSet = new Dictionary<GridCoordinates, Node> ();
 		// the set of tentative nodes to be evaluated
@@ -309,7 +309,6 @@ public class BuildGrid : MonoBehaviour
 			// aggregate simply compares every keyvalue pair sequentially, and returns the key-value pair
 			// with the lowest f_score
 			var current = openSet.Aggregate ((kv1,kv2) => kv1.Value.f_score < kv2.Value.f_score ? kv1 : kv2);
-			
 			// if the grid coordinates in curent is our goal, we return the reconstructed path
 			if (current.Key.x == end.x && current.Key.y == end.y) {
 				var path = new List<Vector3> ();
@@ -325,7 +324,6 @@ public class BuildGrid : MonoBehaviour
 					path.Insert (0, Convert2DTo3DCoordinates (parentNode.parent));
 					parentNode = parentSet [parentNode.parent];
 				}
-				
 				// send result back to caller
 				return path;
 			}
@@ -372,6 +370,7 @@ public class BuildGrid : MonoBehaviour
 
 		}
 		return null;
+
 	} 
 	
 		

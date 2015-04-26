@@ -15,17 +15,17 @@ public class EnemySpawning : MonoBehaviour {
 	 
 	public Transform[] spawnPoints; 
 
-
+	public int daysPassed = 0;
 	// Use this for initialization
 	void Start () {
-	
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
 		if (dayCycle.isNightTime () && !spawned) {
-			SpawnWolves ();
+			daysPassed++;
+			SpawnWolves (daysPassed);
 			spawned = true; 
 			despawned = false;
 		} else if (!dayCycle.isNightTime () && !despawned) {
@@ -36,10 +36,23 @@ public class EnemySpawning : MonoBehaviour {
 	}
 
 
-	void SpawnWolves(){
+	void SpawnWolves(int daysPassed){
 		// spawn 1 wolf at each spawnpoint; 
+		// on the first day, spawn 2 wolves, on the second and third spawn 4.
+		// if more than 3 days have passed, don't spawn wolves
+		int count = 0;
+		if (daysPassed > 3) {
+			return;
+		}
 		foreach (Transform spawnPoint in spawnPoints) {
 			wolves.Add((GameObject) GameObject.Instantiate(wolfPrefab,spawnPoint.position, Quaternion.identity));
+			count ++;
+			if (daysPassed == 1 && count == 2) {
+				return; 
+			} 
+			if (daysPassed > 1 && count == 4) {
+				return;
+			}
 		}
 
 	}

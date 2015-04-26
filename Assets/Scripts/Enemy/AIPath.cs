@@ -24,6 +24,7 @@ public class AIPath : MonoBehaviour
 				move = this.GetComponent<AIMovement> ();
 				player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 				lastPosition = transform.position;
+
 		}
 
 		public void Flee(Transform target) {
@@ -43,6 +44,7 @@ public class AIPath : MonoBehaviour
 					if (Vector3.Distance(transform.position, spawnPoint) < 3.0f)
 						GameObject.Destroy(transform.gameObject);
 				} else {
+
 					Vector3 playerPosition = player.position;
 					setPath(playerPosition);
 				}
@@ -64,6 +66,7 @@ public class AIPath : MonoBehaviour
 				
 
 				if (dist > 5.0f && valid) {
+						Debug.Log(target);
 						lastPosition = target;
 
 						List<Vector3> temp_path = BuildGrid.instance.AStarSearch (this.transform.position, target);
@@ -73,8 +76,7 @@ public class AIPath : MonoBehaviour
 						// else update the path
 						path.Clear ();
 						path.AddRange (temp_path);
-						pathPos = 0;
-
+						pathPos = 1;
 				}
 
 				// draws the path on scene view
