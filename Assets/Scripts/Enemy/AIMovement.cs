@@ -8,7 +8,6 @@ public class AIMovement : MonoBehaviour
 		public float speed = 15;
 		public Vector3 targetPosition;
 		private Vector3 moveDirection = Vector3.zero;
-		float rotateSpeed = 1000.0f;
 
 		private AIPath path; 
 
@@ -20,6 +19,12 @@ public class AIMovement : MonoBehaviour
 		private House house; 
 
 		private float stopRange = 5.0f;
+
+		//value for rotation
+	    private Quaternion _lookRotation;
+	    private Vector3 _direction;
+		public float RotationSpeed = 10.0f;
+
 		void Awake ()
 		{	
 				// give it an initial target position 
@@ -71,13 +76,20 @@ public class AIMovement : MonoBehaviour
 
 				path.stop = false;
 
+
 				if (targetPosition != Vector3.zero) {
 						
-						moveDirection = Vector3.RotateTowards (moveDirection, targetPosition, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
-				
-						moveDirection = moveDirection.normalized;
+					// rotate towards next path point
+					//find the vector pointing from our position to the target
+			        _direction = (targetPosition - transform.position).normalized;
+			 
+			        //create the rotation we need to be in to look at the target
+			        _lookRotation = Quaternion.LookRotation(_direction);
+			 
+			        //rotate us over time according to speed until we are in the required rotation
+			        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+						
 				}
-				transform.rotation = Quaternion.LookRotation (moveDirection);
 				transform.position = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime);
 
 		}
