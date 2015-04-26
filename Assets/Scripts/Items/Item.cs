@@ -17,9 +17,19 @@ public class Item : MonoBehaviour {
 		if (collision.gameObject.tag == "Player") {
 			CharacterControls playerControls = collision.gameObject.GetComponent<CharacterControls>();
 			playerControls.addItem(this);
-			AudioSource.PlayClipAtPoint (Pickup, transform.position);
-			Object.Instantiate((Resources.Load("Effects/Poof", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
-            GameObject.Destroy(gameObject);
+			StartCoroutine(riseAndDestroy());
 		}
+	}
+
+	IEnumerator riseAndDestroy()
+	{
+		float old = Time.time;
+		while(((Time.time - old)) < 1f) {
+			transform.Translate(new Vector3(0,2f,0)*Time.deltaTime);
+			yield return new WaitForSeconds (0.08f);
+		}
+		AudioSource.PlayClipAtPoint (Pickup, transform.position);
+		Object.Instantiate((Resources.Load("Effects/Poof", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
+		GameObject.Destroy(gameObject);
 	}
 }
