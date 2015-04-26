@@ -24,6 +24,7 @@ public class AIPath : MonoBehaviour
 				move = this.GetComponent<AIMovement> ();
 				player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 				lastPosition = transform.position;
+
 		}
 
 		public void Flee(Transform target) {
@@ -43,11 +44,13 @@ public class AIPath : MonoBehaviour
 					if (Vector3.Distance(transform.position, spawnPoint) < 3.0f)
 						GameObject.Destroy(transform.gameObject);
 				} else {
+
 					Vector3 playerPosition = player.position;
 					setPath(playerPosition);
 				}
 		}
 
+	
 		void setPath(Vector3 target) {
 			// check if player position is on a walkable cell. If it is not, then ai characters just move 
 				// towards last cached valid destination
@@ -63,6 +66,7 @@ public class AIPath : MonoBehaviour
 				
 
 				if (dist > 5.0f && valid) {
+						Debug.Log(target);
 						lastPosition = target;
 
 						List<Vector3> temp_path = BuildGrid.instance.AStarSearch (this.transform.position, target);
@@ -72,8 +76,7 @@ public class AIPath : MonoBehaviour
 						// else update the path
 						path.Clear ();
 						path.AddRange (temp_path);
-						pathPos = 0;
-
+						pathPos = 1;
 				}
 
 				// draws the path on scene view
@@ -92,13 +95,6 @@ public class AIPath : MonoBehaviour
 						// change target of AI
 						move.targetPosition = path [pathPos];
 						move.targetPosition = new Vector3(move.targetPosition.x, transform.position.y, move.targetPosition.z);
-
-						// rotate towards next path point
-						Vector3 targetDir = move.targetPosition - transform.position;
-						float step = 100.0f * Time.deltaTime;
-						Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-						//Debug.DrawRay(transform.position, newDir, Color.red);
-						transform.rotation = Quaternion.LookRotation(newDir);
 
 						// increment the path pos once we are close enough to current path pos
 						var distance = Vector3.Distance (move.targetPosition, this.transform.position);
