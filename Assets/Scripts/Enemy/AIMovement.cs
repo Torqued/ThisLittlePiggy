@@ -45,10 +45,11 @@ public class AIMovement : MonoBehaviour
 
 				// check if wolf is attacking house, if so then don't run pathfinding code
 				if (attackingHouse) {
-
+					attackState();
 					if (Time.time % attackInterval < 0.5) {
 						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 							// destroyed house
+							chaseState();
 							attackingHouse = false;
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
 						}
@@ -70,7 +71,7 @@ public class AIMovement : MonoBehaviour
 				// if wolf within stoprange distance of its target, then stop moving and start attacking
 				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
 						path.stop = true;
-						idleState();
+						attackState();
 						if (Time.time % attackInterval < 0.5) {
 						// if player is outside house, then attack house
 							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
@@ -143,6 +144,8 @@ public class AIMovement : MonoBehaviour
 
 		public void attackState() {
 			animator.SetBool(hash.attackBool, true);
+			animator.SetBool(hash.idleBool, false);
+			animator.SetBool(hash.runningBool, false);
 			//What else should be done here?
 		}
 

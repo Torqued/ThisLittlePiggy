@@ -66,7 +66,6 @@ public class AIPath : MonoBehaviour
 				
 
 				if (dist > 5.0f && valid) {
-						Debug.Log(target);
 						lastPosition = target;
 
 						List<Vector3> temp_path = BuildGrid.instance.AStarSearch (this.transform.position, target);
