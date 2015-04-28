@@ -47,7 +47,7 @@ public class AIMovement : MonoBehaviour
 				if (attackingHouse) {
 
 					if (Time.time % attackInterval < 0.5) {
-						if (house == null) {
+						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 							// destroyed house
 							attackingHouse = false;
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);

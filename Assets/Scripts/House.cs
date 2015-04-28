@@ -14,8 +14,12 @@ public class House : MonoBehaviour {
 	public int currentHealth;
 	public bool constructing;
 	public float healthRate;
+	public Transform center;
+	public Transform front;
 	private float nextHp;
 
+	private GameObject player;
+	private bool inHouse = false;
 	void Start(){
 		constructing = true;
 		if (houseType == HouseType.Straw) {
@@ -43,6 +47,14 @@ public class House : MonoBehaviour {
 				constructing = false;
 		}
 
+		if (inHouse) {
+			if (Input.GetKeyDown(KeyCode.Z)) {
+				player.GetComponent<CharacterControls>().setResting(false);
+				player.transform.position = front.position;
+			}
+
+		}
+
 	}
 
 	public void DamageHouse(){
@@ -55,15 +67,20 @@ public class House : MonoBehaviour {
 
 	void OnTriggerStay(Collider other) {
 		if (other.gameObject.tag == "Player") {
-			other.gameObject.GetComponent<CharacterControls>().setResting(true);
-		
+			player = other.gameObject;
+			player.GetComponent<CharacterControls>().setResting(true);
+			player.transform.position = center.position;
+			Debug.Log("in house");
+			inHouse = true;
 		}
 
 	}
 
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.tag == "Player") {
-			other.gameObject.GetComponent<CharacterControls>().setResting(false);
+			player = other.gameObject;
+			player.GetComponent<CharacterControls>().setResting(false);
+			inHouse = false;
 		}
 
 	}
