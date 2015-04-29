@@ -47,13 +47,23 @@ public class House : MonoBehaviour {
 					currentHealth += 1;
 					nextHp = Time.time + healthRate;
 				}
-				houseGUI.updateHealth(currentHealth,maxHealth);
+
 			}
 			else
 				constructing = false;
 		}
 
 		if (inHouse) {
+
+			houseGUI.updateHealth(currentHealth, maxHealth);
+
+
+			if (!GUI && !houseGUI.attacked) {
+
+				houseGUI.EnableGUI();
+				GUI = true;
+			}
+			
 			if (Input.GetKeyDown(KeyCode.Z)) {
 				player.GetComponent<CharacterControls>().setResting(false);
 				player.transform.position = front.position;
@@ -62,20 +72,14 @@ public class House : MonoBehaviour {
 				inHouse = false;
 			}
 
-			if (!GUI && !houseGUI.attacked) {
-
-				houseGUI.EnableGUI();
-				GUI = true;
-			}
 		}
 
 
 	}
 
 	public void DamageHouse(){
-		currentHealth -= 10;
+		currentHealth -= 5;
 		Debug.Log(currentHealth);
-		houseGUI.updateHealth(currentHealth, maxHealth);
 		if (currentHealth <= 0) {
 			houseGUI.DisableGUI();
 			Destroy(gameObject);
@@ -96,7 +100,6 @@ public class House : MonoBehaviour {
 		if (other.gameObject.tag == "Player") {
 			player = other.gameObject;
 			//player.GetComponent<CharacterControls>().setResting(false);
-			Debug.Log("gets here 4");
 			inHouse = false;
 		}
 

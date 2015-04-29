@@ -12,7 +12,6 @@ public class HouseGUI : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		updateHealth(10, 20);
 	}
 	
 	// Update is called once per frame
@@ -40,12 +39,16 @@ public class HouseGUI : MonoBehaviour {
 
 	public void updateHealth(int currentHealth, int maxHealth) {
 		healthPercentage = (currentHealth * 1.0f) / (maxHealth * 1.0f);
+		Debug.Log(healthPercentage);
 		// scale the full bar down based on health percentage
 		// then translate it to the left based on how much it was scaled
-		Vector3 newScale = new Vector3( 1f, healthPercentage, 1f );
+		Vector3 newScale = new Vector3( healthPercentage, 1f , 1f );
 		fullBar.transform.localScale = newScale;
 		Vector3 newPosition = fullBar.transform.localPosition;
 		newPosition.x = (1.0f - healthPercentage) * -5.0f;
  		fullBar.transform.localPosition = newPosition;
+
+		fullBar.GetComponent<Renderer>().enabled = false;
+		fullBar.GetComponent<Renderer>().enabled = true;
 	}
 }
