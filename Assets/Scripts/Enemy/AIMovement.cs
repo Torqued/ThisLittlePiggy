@@ -53,16 +53,13 @@ public class AIMovement : MonoBehaviour
 					if (Time.time % attackInterval < 0.5) {
 						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 							// destroyed house
-							
-							Debug.Log("gets here 1");
-							Debug.Log(path.player.gameObject.GetComponent<CharacterControls>().getResting());
-							Debug.Log("gets here 1.5");
+
 							chaseState();
 							attackingHouse = false;
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
 						}
 						else {
-							//house.DamageHouse();
+							house.DamageHouse();
 							if (!houseGUI.attacked)
 								houseGUI.FadeGUI();
 						}
@@ -153,6 +150,7 @@ public class AIMovement : MonoBehaviour
 		public void idleState() {
 			animator.SetBool(hash.idleBool, true);
 			animator.SetBool(hash.runningBool, false);
+			animator.SetBool(hash.attackBool, false);
 			//agent.speed = 0;
 		}
 
