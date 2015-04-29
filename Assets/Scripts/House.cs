@@ -20,6 +20,10 @@ public class House : MonoBehaviour {
 
 	private GameObject player;
 	private bool inHouse = false;
+	private bool GUI = false;
+
+	private HouseGUI houseGUI;
+
 	void Start(){
 		constructing = true;
 		if (houseType == HouseType.Straw) {
@@ -32,6 +36,7 @@ public class House : MonoBehaviour {
 		healthRate = 1.0f;
 		nextHp = 0.0f;
 		Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), (transform.position - new Vector3(0,5,5)), Quaternion.identity);
+		houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
 	}
 
 	void Update(){
@@ -51,9 +56,18 @@ public class House : MonoBehaviour {
 			if (Input.GetKeyDown(KeyCode.Z)) {
 				player.GetComponent<CharacterControls>().setResting(false);
 				player.transform.position = front.position;
+				houseGUI.DisableGUI();
+				GUI = false;
+				inHouse = false;
 			}
 
+			if (!GUI && !houseGUI.attacked) {
+
+				houseGUI.EnableGUI();
+				GUI = true;
+			}
 		}
+
 
 	}
 
@@ -61,6 +75,7 @@ public class House : MonoBehaviour {
 		currentHealth -= 10;
 		Debug.Log(currentHealth);
 		if (currentHealth <= 0) {
+			houseGUI.DisableGUI();
 			Destroy(gameObject);
 		}
 	}
@@ -70,7 +85,6 @@ public class House : MonoBehaviour {
 			player = other.gameObject;
 			player.GetComponent<CharacterControls>().setResting(true);
 			player.transform.position = center.position;
-			Debug.Log("in house");
 			inHouse = true;
 		}
 
@@ -79,7 +93,8 @@ public class House : MonoBehaviour {
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.tag == "Player") {
 			player = other.gameObject;
-			player.GetComponent<CharacterControls>().setResting(false);
+			//player.GetComponent<CharacterControls>().setResting(false);
+			Debug.Log("gets here 4");
 			inHouse = false;
 		}
 

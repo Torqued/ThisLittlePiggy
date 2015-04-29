@@ -25,6 +25,9 @@ public class AIMovement : MonoBehaviour
 	    private Vector3 _direction;
 		public float RotationSpeed = 10.0f;
 
+
+		private HouseGUI houseGUI;
+
 		void Awake ()
 		{	
 				// give it an initial target position 
@@ -33,6 +36,7 @@ public class AIMovement : MonoBehaviour
 				
 				hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIds>();
 				animator = transform.Find("Model").gameObject.GetComponent<Animator>();
+				houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
 				//howlState();
 		}
 	
@@ -49,12 +53,19 @@ public class AIMovement : MonoBehaviour
 					if (Time.time % attackInterval < 0.5) {
 						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 							// destroyed house
+							
+							Debug.Log("gets here 1");
+							Debug.Log(path.player.gameObject.GetComponent<CharacterControls>().getResting());
+							Debug.Log("gets here 1.5");
 							chaseState();
 							attackingHouse = false;
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
 						}
-						else 
-							house.DamageHouse();
+						else {
+							//house.DamageHouse();
+							if (!houseGUI.attacked)
+								houseGUI.FadeGUI();
+						}
 					}
 					return;
 				}
@@ -118,15 +129,18 @@ public class AIMovement : MonoBehaviour
 
 
 		void OnTriggerExit(Collider other ) {
-			if (other.tag == "House") 
+			if (other.tag == "House") {
 				attackingHouse = false;
+				Debug.Log("gets here 2");
+			}
 		}
 
 		public void chaseState() {
-		animator.SetBool(hash.runningBool, true);
-		animator.SetBool(hash.idleBool, false);
-		//agent.SetDestination(playerLastSighting);
-		//agent.speed = enemySpeed;
+			animator.SetBool(hash.runningBool, true);
+			animator.SetBool(hash.idleBool, false);
+			animator.SetBool(hash.attackBool, false);
+			//agent.SetDestination(playerLastSighting);
+			//agent.speed = enemySpeed;
 		}
 
 		public void alertState() {

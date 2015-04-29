@@ -285,8 +285,7 @@ public class BuildGrid : MonoBehaviour
 		//Start and end in grid coordinates
 		var start = Convert3DTo2DCoordinates (startPosition);
 		var end = Convert3DTo2DCoordinates (endPosition);
-				Debug.Log(end.x);
-				Debug.Log(end.y);
+
 		// the set of nodes already evaluatated
 		var closedSet = new Dictionary<GridCoordinates, Node> ();
 		// the set of tentative nodes to be evaluated
