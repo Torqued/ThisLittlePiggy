@@ -47,6 +47,7 @@ public class House : MonoBehaviour {
 					currentHealth += 1;
 					nextHp = Time.time + healthRate;
 				}
+				houseGUI.updateHealth(currentHealth,maxHealth);
 			}
 			else
 				constructing = false;
@@ -74,6 +75,7 @@ public class House : MonoBehaviour {
 	public void DamageHouse(){
 		currentHealth -= 10;
 		Debug.Log(currentHealth);
+		houseGUI.updateHealth(currentHealth, maxHealth);
 		if (currentHealth <= 0) {
 			houseGUI.DisableGUI();
 			Destroy(gameObject);
