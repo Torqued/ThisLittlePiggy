@@ -26,6 +26,7 @@ public class CameraView {
 
     public void initCamera(Transform transform) {
         ghostCamera = new GameObject(name);
+        ghostCamera.transform.parent = transform;
         ghostCamera.transform.localPosition = view;
         ghostCamera.transform.LookAt(transform.position + Vector3.up * viewHeight);
     }
