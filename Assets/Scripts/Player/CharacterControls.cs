@@ -429,11 +429,9 @@ public class CharacterControls : MonoBehaviour {
     }
 
     public void damageStamina(float amount) {
+        playerStamina = Mathf.Clamp(playerStamina - amount, 0, maxStamina);
         if (playerStamina <= 0.01) {
             playerDeath();
-        }
-        else {
-            playerStamina = Mathf.Clamp(playerStamina - amount, 0, maxStamina);
         }
     }
 
