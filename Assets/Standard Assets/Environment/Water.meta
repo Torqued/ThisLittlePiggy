@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Standard Assets/Environment/Water.meta
 guid: 5357d33ef83eccf4dab845cd6e4147c3
 folderAsset: yes
 timeCreated: 1430431388
+=======
+guid: 4f65f58f1750429468db4bef75317815
+folderAsset: yes
+timeCreated: 1430166296
+>>>>>>> a3177277c23b9e5f1d169ff071facfd1b5550634:Assets/Standard Assets/Environment/Water.meta
 licenseType: Free
 DefaultImporter:
   userData: 

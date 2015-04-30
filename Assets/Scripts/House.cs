@@ -77,7 +77,7 @@ public class House : MonoBehaviour {
 				GUI = true;
 			}
 
-			if (Input.GetKeyDown(KeyCode.Z)) {
+			if (Input.GetKeyDown(KeyCode.F)) {
 				player.GetComponent<CharacterControls>().setResting(false);
 				player.transform.position = front.position;
 				houseGUI.DisableGUI();
@@ -90,10 +90,10 @@ public class House : MonoBehaviour {
 
 	}
 
-	public void DamageHouse(){
+	public void DamageHouse(int damage){
 		if (houseType == HouseType.Bricks)
 			return;
-		currentHealth -= 5;
+		currentHealth -= damage;
 		Debug.Log(currentHealth);
 		if (currentHealth <= 0) {
 			houseGUI.DisableGUI();

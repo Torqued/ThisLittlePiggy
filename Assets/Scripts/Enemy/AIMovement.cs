@@ -29,6 +29,10 @@ public class AIMovement : MonoBehaviour
 
 		private HouseGUI houseGUI;
 		private Transform model; 
+
+		private AudioSource attack; 
+		private AudioSource growl; 
+
 		void Awake ()
 		{	
 				// give it an initial target position 
@@ -39,7 +43,11 @@ public class AIMovement : MonoBehaviour
 				hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIds>();
 				animator = model.gameObject.GetComponent<Animator>();
 				houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
-				
+				AudioSource[] sounds = this.gameObject.GetComponents<AudioSource>();
+				if (sounds.Length > 1) {
+					attack = sounds[0];
+					growl = sounds[1];
+				}
 		}
 	
 		// Update is called once per frame
@@ -48,6 +56,11 @@ public class AIMovement : MonoBehaviour
 				// check if there is a player 
 				if (path.player == null)
 					return;
+				// play the growl sound once every 5 seconds
+				if (Time.time % 5.0 == 0) {
+					//growl.Play();
+				}
+				Debug.Log(path.player.gameObject.GetComponent<CharacterControls>().getResting());
 				// check if wolf is attacking house, if so then don't run pathfinding code
 				if (attackingHouse) {
 					if (!boss) attackState();
@@ -61,9 +74,14 @@ public class AIMovement : MonoBehaviour
 						}
 						else {
 							// only damage house if not a brick house
-							if (house.houseType != HouseType.Bricks)
-								house.DamageHouse();
-								
+							if (house.houseType != HouseType.Bricks) {
+								house.DamageHouse(5);
+							}
+							else {
+								house.DamageHouse(0);
+							}
+
+							attack.Play();
 							if (!houseGUI.attacked)
 								houseGUI.FadeGUI();
 						}
@@ -81,21 +99,28 @@ public class AIMovement : MonoBehaviour
 					else stopRange = 10.0f;
 				}
 
-				Debug.Log(Vector3.Distance (path.player.position, this.transform.position));
 				// if wolf within stoprange distance of its target, then stop moving and start attacking
-				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange || path.reachedTarget) {
-					
+				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
+						
 						path.stop = true;
 						if (!boss) attackState();
 						if (Time.time % attackInterval == 0) {
 						// if player is outside house, then attack house
-							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
+							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(10.0f);
+								attack.Play();
+							}
+							else {
+								attackingHouse = true;
+							}
 						
 						}
 						return;
 				}
-				else { if (!boss) chaseState();}
+				else { 
+					if (!boss) chaseState();
+
+				}
 
 
 				path.stop = false;
@@ -129,13 +154,16 @@ public class AIMovement : MonoBehaviour
 			if (other.tag == "House") {
 				attackingHouse = true;
 				house = other.gameObject.GetComponent<House>();
+				Debug.Log("gets here");
 			}
 		}
 
 
 		void OnTriggerExit(Collider other ) {
 			if (other.tag == "House") {
-				attackingHouse = false;
+				if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
+					attackingHouse = false;
+				Debug.Log("gets here2");
 			}
 		}
 
