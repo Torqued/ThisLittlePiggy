@@ -19,6 +19,8 @@ public class AIPath : MonoBehaviour
 		public bool stop = false;
 		private bool flee = false; 
 		private Vector3 spawnPoint; 
+
+		public bool reachedTarget = false; 
 		void Awake ()
 		{
 				move = this.GetComponent<AIMovement> ();
@@ -76,6 +78,7 @@ public class AIPath : MonoBehaviour
 						path.Clear ();
 						path.AddRange (temp_path);
 						pathPos = 1;
+
 				}
 
 				// draws the path on scene view
