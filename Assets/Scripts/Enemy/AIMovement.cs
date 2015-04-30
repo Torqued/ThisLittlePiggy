@@ -59,8 +59,10 @@ public class AIMovement : MonoBehaviour
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
 						}
 						else {
-							Debug.Log(Time.time);
-							house.DamageHouse();
+							// only damage house if not a brick house
+							if (house.houseType != HouseType.Bricks)
+								house.DamageHouse();
+								
 							if (!houseGUI.attacked)
 								houseGUI.FadeGUI();
 						}
