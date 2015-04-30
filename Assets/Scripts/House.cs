@@ -30,28 +30,21 @@ public class House : MonoBehaviour {
 	Bounds gridBounds;
 
 	void Start(){
-//		constructing = true;
-//		if (houseType == HouseType.Straw) {
-//			maxHealth = 100;
-//		} else if (houseType == HouseType.Sticks) {
-//			maxHealth = 150;
-//		} else if (houseType == HouseType.Bricks) {
-//			maxHealth = 1000;
-//		}
-//		healthRate = 1.0f;
-//		nextHp = 0.0f;
-
+		constructing = true;
 		if (houseType == HouseType.Straw) {
+			maxHealth = 100;
 			currentHealth = 100;
 		} else if (houseType == HouseType.Sticks) {
+			maxHealth = 150;
 			currentHealth = 150;
 		} else if (houseType == HouseType.Bricks) {
+			maxHealth = 1000;
 			currentHealth = 1000;
 		}
 
+
 		//Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), (transform.position - new Vector3(0,5,5)), Quaternion.identity);
-		healthRate = 1.0f;
-		nextHp = 0.0f;
+	
 	//	UnityEngine.Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), (transform.position - new Vector3(0,5,5)), Quaternion.identity);
 		houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
 
