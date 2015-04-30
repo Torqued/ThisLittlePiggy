@@ -32,6 +32,7 @@ public class AIPath : MonoBehaviour
 		public void Flee(Transform target) {
 			flee = true;
 			spawnPoint = target.position;
+			move.attackingHouse = false;
 		}
 
 		void FixedUpdate ()
