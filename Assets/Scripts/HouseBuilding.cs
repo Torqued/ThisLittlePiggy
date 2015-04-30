@@ -21,11 +21,11 @@ public class HouseBuilding : MonoBehaviour {
 	void Update () {
 		if (!builtHouse && (Time.time - t) > 15f) {
 			if (h == HouseType.Sticks)
-				Object.Instantiate ((Resources.Load ("Houses/LogHouse", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
+				Object.Instantiate ((Resources.Load ("Houses/LogHousePrefab", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
 			if (h == HouseType.Straw)
 				Object.Instantiate ((Resources.Load ("Houses/StrawHousePrefab", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
 			if (h == HouseType.Bricks)
-				Object.Instantiate ((Resources.Load ("Houses/BrickHouse", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
+				Object.Instantiate ((Resources.Load ("Houses/BrickHousePrefab", typeof(GameObject)) as GameObject), transform.position, Quaternion.identity);
 			builtHouse = true;
 		}
 		if (!builtHouse) {
