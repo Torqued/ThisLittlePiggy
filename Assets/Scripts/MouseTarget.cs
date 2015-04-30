@@ -5,7 +5,7 @@ public class MouseTarget : MonoBehaviour {
 
     public Color outlineColor;
 
-    private Renderer outlineRenderer;
+    private Renderer[] outlineRenderers;
     private bool outline;
     private bool needUpdate;
 
@@ -16,12 +16,11 @@ public class MouseTarget : MonoBehaviour {
             Debug.Break();
         }
 
-        if ((outlineRenderer = child.gameObject.GetComponent<Renderer>()) == null) {
-            Debug.LogError("The \"Model\" GameObject must have a renderer component.");
-            Debug.Break();
-        }
+        outlineRenderers = child.gameObject.GetComponents<Renderer>();
 
-        outlineRenderer.material.SetColor("_OutlineColor", Color.clear);
+        foreach (Renderer r in outlineRenderers) {
+            r.material.SetColor("_OutlineColor", Color.clear);
+        }
 	}
 	
     public void setOutline() {
@@ -32,11 +31,15 @@ public class MouseTarget : MonoBehaviour {
     void LateUpdate() {
         if (needUpdate) {
             if (outline) {
-                outlineRenderer.material.SetColor("_OutlineColor", outlineColor);
+                foreach (Renderer r in outlineRenderers) {
+                    r.material.SetColor("_OutlineColor", outlineColor);
+                }
                 outline = false;
             }
             else {
-                outlineRenderer.material.SetColor("_OutlineColor", Color.clear);
+                foreach (Renderer r in outlineRenderers) {
+                    r.material.SetColor("_OutlineColor", Color.clear);
+                }
                 needUpdate = false;
             }
         }
