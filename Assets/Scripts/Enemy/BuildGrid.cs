@@ -144,7 +144,7 @@ public class BuildGrid : MonoBehaviour
 						cell.isWalkable = false;
 					}
 				}
-				/*
+				
 				// generate 4 random rays out of topleft square of cell 
 				for (var i = 0; i < 4; i++) {
 					var factor1 = UnityEngine.Random.Range (0f, 0.5f);
@@ -200,7 +200,7 @@ public class BuildGrid : MonoBehaviour
 						}
 					}
 				}
-				*/
+				
 
 			}
 		}
