@@ -59,15 +59,16 @@ public class House : MonoBehaviour {
 
 
 			if (!GUI && !houseGUI.attacked) {
-
 				houseGUI.EnableGUI();
+				Debug.Log("gets here to enable GUI");
 				GUI = true;
 			}
-			
+
 			if (Input.GetKeyDown(KeyCode.Z)) {
 				player.GetComponent<CharacterControls>().setResting(false);
 				player.transform.position = front.position;
 				houseGUI.DisableGUI();
+				Debug.Log("gets here to disable GUI");
 				GUI = false;
 				inHouse = false;
 			}
@@ -82,6 +83,7 @@ public class House : MonoBehaviour {
 		Debug.Log(currentHealth);
 		if (currentHealth <= 0) {
 			houseGUI.DisableGUI();
+			Debug.Log("gets here to disable GUI 2");
 			Destroy(gameObject);
 		}
 	}
