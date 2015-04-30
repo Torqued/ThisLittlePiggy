@@ -90,7 +90,7 @@ namespace UnityStandardAssets.ImageEffects
             grainIntensityMax = Mathf.Clamp( grainIntensityMax, 0.0f, 5.0f );
             scratchIntensityMin = Mathf.Clamp( scratchIntensityMin, 0.0f, 5.0f );
             scratchIntensityMax = Mathf.Clamp( scratchIntensityMax, 0.0f, 5.0f );
-            scratchFPS = Mathf.Clamp( scratchFPS, 1, 30 );
+            scratchFPS = Mathf.Clamp( scratchFPS, 1, 300 );
             scratchJitter = Mathf.Clamp( scratchJitter, 0.0f, 1.0f );
             grainSize = Mathf.Clamp( grainSize, 0.1f, 50.0f );
         }
@@ -102,7 +102,7 @@ namespace UnityStandardAssets.ImageEffects
 
             if ( scratchTimeLeft <= 0.0f )
             {
-                scratchTimeLeft = Random.value * 2 / scratchFPS; // we have sanitized it earlier, won't be zero
+                scratchTimeLeft = Random.value / (scratchFPS*100); // we have sanitized it earlier, won't be zero
                 scratchX = Random.value;
                 scratchY = Random.value;
             }

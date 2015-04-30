@@ -13,6 +13,7 @@ public class AIMovement : MonoBehaviour
 
 		public Animator animator;
 		public HashIds hash;
+		public bool boss; 
 
 		public float attackInterval = 2.0f;
 		public bool attackingHouse = false;
@@ -27,6 +28,10 @@ public class AIMovement : MonoBehaviour
 
 
 		private HouseGUI houseGUI;
+		private Transform model; 
+
+		private AudioSource attack; 
+		private AudioSource growl; 
 
 		void Awake ()
 		{	
@@ -34,10 +39,15 @@ public class AIMovement : MonoBehaviour
 				targetPosition = transform.position;
 				path = this.GetComponent<AIPath> ();
 				
+				model = transform.Find("Model");
 				hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIds>();
-				animator = transform.Find("Model").gameObject.GetComponent<Animator>();
+				animator = model.gameObject.GetComponent<Animator>();
 				houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
-				//howlState();
+				AudioSource[] sounds = this.gameObject.GetComponents<AudioSource>();
+				if (sounds.Length > 1) {
+					attack = sounds[0];
+					growl = sounds[1];
+				}
 		}
 	
 		// Update is called once per frame
@@ -46,20 +56,32 @@ public class AIMovement : MonoBehaviour
 				// check if there is a player 
 				if (path.player == null)
 					return;
-
+				// play the growl sound once every 5 seconds
+				if (Time.time % 5.0 == 0) {
+					//growl.Play();
+				}
+				Debug.Log(path.player.gameObject.GetComponent<CharacterControls>().getResting());
 				// check if wolf is attacking house, if so then don't run pathfinding code
 				if (attackingHouse) {
-					attackState();
-					if (Time.time % attackInterval < 0.5) {
+					if (!boss) attackState();
+					if (Time.time % attackInterval == 0) {
 						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 							// destroyed house
 
-							chaseState();
+							if (!boss) chaseState();
 							attackingHouse = false;
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
 						}
 						else {
-							house.DamageHouse();
+							// only damage house if not a brick house
+							if (house.houseType != HouseType.Bricks) {
+								house.DamageHouse(5);
+							}
+							else {
+								house.DamageHouse(0);
+							}
+
+							attack.Play();
 							if (!houseGUI.attacked)
 								houseGUI.FadeGUI();
 						}
@@ -69,25 +91,36 @@ public class AIMovement : MonoBehaviour
 
 				// if pig inside house, then increase the distance from the pig at which the wolf stops
 				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
-								stopRange = 10.0f;
+								if (!boss) stopRange = 10.0f;
+								else stopRange = 20.0f;
 				}
 				else {
-					stopRange = 5.0f;
+					if (!boss) stopRange = 5.0f;
+					else stopRange = 10.0f;
 				}
-
 
 				// if wolf within stoprange distance of its target, then stop moving and start attacking
 				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
+						
 						path.stop = true;
-						attackState();
-						if (Time.time % attackInterval < 0.5) {
+						if (!boss) attackState();
+						if (Time.time % attackInterval == 0) {
 						// if player is outside house, then attack house
-							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
+							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(10.0f);
+								attack.Play();
+							}
+							else {
+								attackingHouse = true;
+							}
+						
 						}
 						return;
 				}
-				else { chaseState();}
+				else { 
+					if (!boss) chaseState();
+
+				}
 
 
 				path.stop = false;
@@ -108,7 +141,7 @@ public class AIMovement : MonoBehaviour
 			        	_lookRotation = Quaternion.LookRotation(_direction);
 			 
 				        //rotation over time according to speed until we are in the required rotation
-				        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+				        model.rotation = Quaternion.Slerp(model.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
 				    }
 						
 				}
@@ -121,14 +154,16 @@ public class AIMovement : MonoBehaviour
 			if (other.tag == "House") {
 				attackingHouse = true;
 				house = other.gameObject.GetComponent<House>();
+				Debug.Log("gets here");
 			}
 		}
 
 
 		void OnTriggerExit(Collider other ) {
 			if (other.tag == "House") {
-				attackingHouse = false;
-				Debug.Log("gets here 2");
+				if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
+					attackingHouse = false;
+				Debug.Log("gets here2");
 			}
 		}
 
