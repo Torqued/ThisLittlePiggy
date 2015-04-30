@@ -50,7 +50,7 @@ public class AIMovement : MonoBehaviour
 				// check if wolf is attacking house, if so then don't run pathfinding code
 				if (attackingHouse) {
 					attackState();
-					if (Time.time % attackInterval < 0.5) {
+					if (Time.time % attackInterval == 0) {
 						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 							// destroyed house
 
@@ -59,6 +59,7 @@ public class AIMovement : MonoBehaviour
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
 						}
 						else {
+							Debug.Log(Time.time);
 							house.DamageHouse();
 							if (!houseGUI.attacked)
 								houseGUI.FadeGUI();
@@ -80,7 +81,7 @@ public class AIMovement : MonoBehaviour
 				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
 						path.stop = true;
 						attackState();
-						if (Time.time % attackInterval < 0.5) {
+						if (Time.time % attackInterval == 0) {
 						// if player is outside house, then attack house
 							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
 								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(10.0f);
@@ -128,7 +129,6 @@ public class AIMovement : MonoBehaviour
 		void OnTriggerExit(Collider other ) {
 			if (other.tag == "House") {
 				attackingHouse = false;
-				Debug.Log("gets here 2");
 			}
 		}
 
