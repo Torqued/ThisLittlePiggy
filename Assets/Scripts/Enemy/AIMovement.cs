@@ -13,6 +13,7 @@ public class AIMovement : MonoBehaviour
 
 		public Animator animator;
 		public HashIds hash;
+		public bool boss; 
 
 		public float attackInterval = 2.0f;
 		public bool attackingHouse = false;
@@ -38,7 +39,7 @@ public class AIMovement : MonoBehaviour
 				hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIds>();
 				animator = model.gameObject.GetComponent<Animator>();
 				houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
-				//howlState();
+				
 		}
 	
 		// Update is called once per frame
@@ -47,15 +48,14 @@ public class AIMovement : MonoBehaviour
 				// check if there is a player 
 				if (path.player == null)
 					return;
-
 				// check if wolf is attacking house, if so then don't run pathfinding code
 				if (attackingHouse) {
-					attackState();
+					if (!boss) attackState();
 					if (Time.time % attackInterval == 0) {
 						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 							// destroyed house
 
-							chaseState();
+							if (!boss) chaseState();
 							attackingHouse = false;
 							path.player.gameObject.GetComponent<CharacterControls>().setResting(false);
 						}
@@ -73,25 +73,29 @@ public class AIMovement : MonoBehaviour
 
 				// if pig inside house, then increase the distance from the pig at which the wolf stops
 				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
-								stopRange = 10.0f;
+								if (!boss) stopRange = 10.0f;
+								else stopRange = 20.0f;
 				}
 				else {
-					stopRange = 5.0f;
+					if (!boss) stopRange = 5.0f;
+					else stopRange = 10.0f;
 				}
 
-
+				Debug.Log(Vector3.Distance (path.player.position, this.transform.position));
 				// if wolf within stoprange distance of its target, then stop moving and start attacking
-				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange) {
+				if (Vector3.Distance (path.player.position, this.transform.position) <= stopRange || path.reachedTarget) {
+					
 						path.stop = true;
-						attackState();
+						if (!boss) attackState();
 						if (Time.time % attackInterval == 0) {
 						// if player is outside house, then attack house
 							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
 								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(10.0f);
+						
 						}
 						return;
 				}
-				else { chaseState();}
+				else { if (!boss) chaseState();}
 
 
 				path.stop = false;

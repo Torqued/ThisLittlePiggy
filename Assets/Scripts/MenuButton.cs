@@ -17,10 +17,8 @@ public class MenuButton : MonoBehaviour {
 		if (Input.GetButtonDown("Fire1")) {
 			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit; 
-			Debug.Log("gets here1");
 			if (Physics.Raycast(ray, out hit, 30.0f)) {
 				Application.LoadLevel(sceneName);
-				Debug.Log("gets here2");
 			}
 				
 		}
