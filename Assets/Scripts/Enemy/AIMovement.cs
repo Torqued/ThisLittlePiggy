@@ -107,7 +107,10 @@ public class AIMovement : MonoBehaviour
 						if (Time.time % attackInterval == 0) {
 						// if player is outside house, then attack house
 							if (!path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
-								path.player.gameObject.GetComponent<CharacterControls>().damageStamina(10.0f);
+								if (!boss) 
+									path.player.gameObject.GetComponent<CharacterControls>().damageStamina(34.0f);
+								else 
+									path.player.gameObject.GetComponent<CharacterControls>().damageStamina(101.0f);
 								attack.Play();
 							}
 							else {
