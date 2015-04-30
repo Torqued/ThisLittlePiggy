@@ -25,33 +25,42 @@ public class House : MonoBehaviour {
 	private HouseGUI houseGUI;
 
 	void Start(){
-		constructing = true;
+//		constructing = true;
+//		if (houseType == HouseType.Straw) {
+//			maxHealth = 100;
+//		} else if (houseType == HouseType.Sticks) {
+//			maxHealth = 150;
+//		} else if (houseType == HouseType.Bricks) {
+//			maxHealth = 1000;
+//		}
+//		healthRate = 1.0f;
+//		nextHp = 0.0f;
+
 		if (houseType == HouseType.Straw) {
-			maxHealth = 100;
+			currentHealth = 100;
 		} else if (houseType == HouseType.Sticks) {
-			maxHealth = 150;
+			currentHealth = 150;
 		} else if (houseType == HouseType.Bricks) {
-			maxHealth = 1000;
+			currentHealth = 1000;
 		}
-		healthRate = 1.0f;
-		nextHp = 0.0f;
-		Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), (transform.position - new Vector3(0,5,5)), Quaternion.identity);
+
+		//Object.Instantiate((Resources.Load("Effects/ConstructionEffect", typeof(GameObject)) as GameObject), (transform.position - new Vector3(0,5,5)), Quaternion.identity);
 		houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
 	}
 
 	void Update(){
-		if (constructing) {
-			if(currentHealth < maxHealth)
-			{
-				if(Time.time > nextHp){
-					currentHealth += 1;
-					nextHp = Time.time + healthRate;
-				}
-
-			}
-			else
-				constructing = false;
-		}
+//		if (constructing) {
+//			if(currentHealth < maxHealth)
+//			{
+//				if(Time.time > nextHp){
+//					currentHealth += 1;
+//					nextHp = Time.time + healthRate;
+//				}
+//
+//			}
+//			else
+//				constructing = false;
+//		}
 
 		if (inHouse) {
 
@@ -79,6 +88,8 @@ public class House : MonoBehaviour {
 	}
 
 	public void DamageHouse(){
+		if (houseType == HouseType.Bricks)
+			return;
 		currentHealth -= 5;
 		Debug.Log(currentHealth);
 		if (currentHealth <= 0) {
