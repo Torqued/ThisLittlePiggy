@@ -27,15 +27,16 @@ public class AIMovement : MonoBehaviour
 
 
 		private HouseGUI houseGUI;
-
+		private Transform model; 
 		void Awake ()
 		{	
 				// give it an initial target position 
 				targetPosition = transform.position;
 				path = this.GetComponent<AIPath> ();
 				
+				model = transform.Find("Model");
 				hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIds>();
-				animator = transform.Find("Model").gameObject.GetComponent<Animator>();
+				animator = model.gameObject.GetComponent<Animator>();
 				houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
 				//howlState();
 		}
@@ -111,7 +112,7 @@ public class AIMovement : MonoBehaviour
 			        	_lookRotation = Quaternion.LookRotation(_direction);
 			 
 				        //rotation over time according to speed until we are in the required rotation
-				        transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+				        model.rotation = Quaternion.Slerp(model.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
 				    }
 						
 				}
