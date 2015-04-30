@@ -12,8 +12,10 @@ public class HouseGUI : MonoBehaviour {
 
 	private float healthPercentage = 1.0f;
 
+	private AudioSource snoring; 
 	// Use this for initialization
-	void Start () {
+	void Awake() {
+		snoring = this.GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -26,6 +28,7 @@ public class HouseGUI : MonoBehaviour {
 		emptyBar.GetComponent<Renderer>().enabled = true;
 		fullBar.GetComponent<Renderer>().enabled = true;
 		text.GetComponent<Renderer>().enabled = true;
+		snoring.Play();
 	}
 
 	public void DisableGUI() {
@@ -33,12 +36,14 @@ public class HouseGUI : MonoBehaviour {
 		emptyBar.GetComponent<Renderer>().enabled = false;
 		fullBar.GetComponent<Renderer>().enabled = false;
 		text.GetComponent<Renderer>().enabled = false;
+		snoring.Stop();
 	}
 
 	public void FadeGUI() {
 		attacked = true;
 		this.GetComponent<Renderer>().material.color = new Vector4(this.GetComponent<Renderer>().material.color.r, 
 			this.GetComponent<Renderer>().material.color.g, this.GetComponent<Renderer>().material.color.b, 0.5f);
+		snoring.Play();
 	}
 
 	public void updateHealth(int currentHealth, int maxHealth) {
