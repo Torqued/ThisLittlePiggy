@@ -16,6 +16,7 @@ Shader "Shader Forge/ComicShader" {
         Tags {
             "RenderType"="Opaque"
         }
+        Fog {Mode Off}
         Pass {
             Name "Outline"
             Tags {
