@@ -18,7 +18,8 @@ public class MenuButton : MonoBehaviour {
 			var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit; 
 			if (Physics.Raycast(ray, out hit, 30.0f)) {
-				Application.LoadLevel(sceneName);
+				if(hit.collider.transform.position == button.transform.position)
+					Application.LoadLevel(sceneName);
 			}
 				
 		}
