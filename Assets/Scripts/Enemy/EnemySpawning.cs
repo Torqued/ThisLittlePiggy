@@ -21,7 +21,6 @@ public class EnemySpawning : MonoBehaviour {
 	public int daysPassed = 0;
 	// Use this for initialization
 	void Awake () {
-		SpawnWolves (1);
 	}
 	
 	// Update is called once per frame

@@ -43,7 +43,7 @@ public class HouseGUI : MonoBehaviour {
 		attacked = true;
 		this.GetComponent<Renderer>().material.color = new Vector4(this.GetComponent<Renderer>().material.color.r, 
 			this.GetComponent<Renderer>().material.color.g, this.GetComponent<Renderer>().material.color.b, 0.5f);
-		snoring.Play();
+		snoring.Stop();
 	}
 
 	public void updateHealth(int currentHealth, int maxHealth) {
