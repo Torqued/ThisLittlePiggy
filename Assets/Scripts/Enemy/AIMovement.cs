@@ -63,9 +63,10 @@ public class AIMovement : MonoBehaviour
 				if (Time.time % 10.0 == 0) {
 					//growl.Play();
 				}
-				Debug.Log(path.player.gameObject.GetComponent<CharacterControls>().getResting());
+
 				// check if wolf is attacking house, if so then don't run pathfinding code
-				if (attackingHouse) {
+				if (attackingHouse ) {
+
 					if (!boss) attackState();
 					if (Time.time % attackInterval == 0) {
 						if (house == null || !path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
@@ -82,6 +83,7 @@ public class AIMovement : MonoBehaviour
 							}
 							else {
 								house.DamageHouse(0);
+								Application.LoadLevel("End");
 							}
 
 							attack.Play();
@@ -94,12 +96,12 @@ public class AIMovement : MonoBehaviour
 
 				// if pig inside house, then increase the distance from the pig at which the wolf stops
 				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
-								if (!boss) stopRange = 10.0f;
-								else stopRange = 20.0f;
+								if (!boss) stopRange = 5.0f;
+								else stopRange = 5.0f;
 				}
 				else {
 					if (!boss) stopRange = 5.0f;
-					else stopRange = 10.0f;
+					else stopRange = 5.0f;
 				}
 
 				// if wolf within stoprange distance of its target, then stop moving and start attacking
@@ -117,7 +119,7 @@ public class AIMovement : MonoBehaviour
 								attack.Play();
 							}
 							else {
-								attackingHouse = true;
+								//attackingHouse = true;
 							}
 						
 						}
