@@ -20,7 +20,8 @@ public class EnemySpawning : MonoBehaviour {
 	public Transform bigBadWolfSpawnPoint;
 	public int daysPassed = 0;
 	// Use this for initialization
-	void Start () {
+	void Awake () {
+		SpawnWolves (1);
 	}
 	
 	// Update is called once per frame

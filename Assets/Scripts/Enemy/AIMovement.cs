@@ -61,7 +61,7 @@ public class AIMovement : MonoBehaviour
 					return;
 				// play the growl sound once every 5 seconds
 				if (Time.time % 10.0 == 0) {
-					growl.Play();
+					//growl.Play();
 				}
 				Debug.Log(path.player.gameObject.GetComponent<CharacterControls>().getResting());
 				// check if wolf is attacking house, if so then don't run pathfinding code
