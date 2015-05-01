@@ -32,6 +32,7 @@ public class AIMovement : MonoBehaviour
 
 		private AudioSource attack; 
 		private AudioSource growl; 
+		private AudioSource howl;
 
 		void Awake ()
 		{	
@@ -45,8 +46,10 @@ public class AIMovement : MonoBehaviour
 				houseGUI = GameObject.FindGameObjectWithTag("HouseGUI").GetComponent<HouseGUI>();
 				AudioSource[] sounds = this.gameObject.GetComponents<AudioSource>();
 				if (sounds.Length > 1) {
-					attack = sounds[0];
+					howl = sounds[0];
 					growl = sounds[1];
+					attack = sounds[2];
+					//howl.Play();
 				}
 		}
 	
@@ -57,8 +60,8 @@ public class AIMovement : MonoBehaviour
 				if (path.player == null)
 					return;
 				// play the growl sound once every 5 seconds
-				if (Time.time % 5.0 == 0) {
-					//growl.Play();
+				if (Time.time % 10.0 == 0) {
+					growl.Play();
 				}
 				Debug.Log(path.player.gameObject.GetComponent<CharacterControls>().getResting());
 				// check if wolf is attacking house, if so then don't run pathfinding code
@@ -118,6 +121,23 @@ public class AIMovement : MonoBehaviour
 							}
 						
 						}
+
+						
+						// rotate towards next path point
+						//find the vector pointing from our position to the target
+					    _direction = (path.player.position - transform.position).normalized;
+					 
+					       
+					    if (_direction == Vector3.zero)
+					        ;
+					    else {
+					        //create the rotation we need to be in to look at the target
+					        _lookRotation = Quaternion.LookRotation(_direction);
+					 
+						    //rotation over time according to speed until we are in the required rotation
+						    model.rotation = Quaternion.Slerp(model.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+						}
+					
 						return;
 				}
 				else { 
