@@ -5,6 +5,7 @@ using System.Collections;
 
 public class Video : MonoBehaviour {
 
+	public string nextScene;
 	public MovieTexture movie;
 	// Use this for initialization
 
@@ -17,7 +18,7 @@ public class Video : MonoBehaviour {
 
 	void Update(){
 		if (!movie.isPlaying) {
-			Application.LoadLevel("mainBeta");
+			Application.LoadLevel(nextScene);
 		}
 	}
 }
