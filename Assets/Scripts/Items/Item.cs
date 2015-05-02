@@ -24,8 +24,8 @@ public class Item : MonoBehaviour {
 	IEnumerator riseAndDestroy()
 	{
 		float old = Time.time;
-		while(((Time.time - old)) < 1f) {
-			transform.Translate(new Vector3(0,1f,0)*Time.deltaTime*7);
+		while(((Time.time - old)) < 0.5f) {
+			transform.Translate(new Vector3(0,1f,0)*Time.deltaTime*14);
 			yield return null;
 		}
 		AudioSource.PlayClipAtPoint (Pickup, transform.position);

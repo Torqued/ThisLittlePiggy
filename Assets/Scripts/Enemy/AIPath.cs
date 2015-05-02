@@ -44,7 +44,8 @@ public class AIPath : MonoBehaviour
 
 				if (flee) {
 					setPath(spawnPoint);
-					if (Vector3.Distance(transform.position, spawnPoint) < 3.0f)
+					
+			if (Vector2.Distance(new Vector2 (transform.position.x,transform.position.z), new Vector2(spawnPoint.x,spawnPoint.z)) < 3.0f)
 						GameObject.Destroy(transform.gameObject);
 				} else {
 
@@ -57,6 +58,7 @@ public class AIPath : MonoBehaviour
 		void setPath(Vector3 target) {
 			// check if player position is on a walkable cell. If it is not, then ai characters just move 
 				// towards last cached valid destination
+				if(target==null) return;
 				var gridPosition = BuildGrid.instance.Convert3DTo2DCoordinates (target);
 				var valid = true; 
 				if (BuildGrid.instance.grid != null) {

@@ -79,7 +79,7 @@ public class House : MonoBehaviour {
 
 			if (Input.GetKeyDown(KeyCode.F)) {
 				player.GetComponent<CharacterControls>().setResting(false);
-				player.transform.position = front.position;
+				player.transform.position = new Vector3(front.position.x,player.transform.position.y,front.position.z);
 				houseGUI.DisableGUI();
 				Debug.Log("gets here to disable GUI");
 				GUI = false;
@@ -106,7 +106,7 @@ public class House : MonoBehaviour {
 		if (other.gameObject.tag == "Player") {
 			player = other.gameObject;
 			player.GetComponent<CharacterControls>().setResting(true);
-			player.transform.position = center.position;
+			player.transform.position = new Vector3(center.position.x,player.transform.position.y,center.position.z);
 			inHouse = true;
 		}
 

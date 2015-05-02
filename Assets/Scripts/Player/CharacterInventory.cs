@@ -64,7 +64,7 @@ public static class CraftingRecipes {
         
         public void craftingResult(CharacterInventory i) {
 			i.removeItem (ItemType.Bricks, 10);
-			i.removeItem (ItemType.Sticks, 4);
+			//i.removeItem (ItemType.Sticks, 4);
 			
 			placeHouse (i);
         }
@@ -79,8 +79,8 @@ public static class CraftingRecipes {
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
-			Vector3 position = 20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0.25f, player.transform.forward.z)) +
-				player.transform.position;
+			Vector3 position = player.transform.position+new Vector3(0,10,0);//20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0.25f, player.transform.forward.z)) +
+				//player.transform.position;
 			Object.Instantiate((Resources.Load("Houses/BrickHouseWait", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
     }
@@ -110,8 +110,8 @@ public static class CraftingRecipes {
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
-			Vector3 position = 20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
-				player.transform.position;
+			Vector3 position = player.transform.position+new Vector3(0,10,0);//20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0, player.transform.forward.z)) +
+				//player.transform.position;
 			Object.Instantiate((Resources.Load("Houses/LogHouseWait", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
 
@@ -143,8 +143,8 @@ public static class CraftingRecipes {
 
 		private void placeHouse(CharacterInventory i){
 			GameObject player = i.gameObject;
-			Vector3 position = 20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0.5f, player.transform.forward.z)) +
-				player.transform.position;
+			Vector3 position = player.transform.position+new Vector3(0,10,0);//20*Vector3.Normalize(new Vector3(player.transform.forward.x, 0.5f, player.transform.forward.z)) +
+				//player.transform.position;
 			Object.Instantiate((Resources.Load("Houses/StrawHouseWait", typeof(GameObject)) as GameObject), position, Quaternion.identity);
 		}
     }

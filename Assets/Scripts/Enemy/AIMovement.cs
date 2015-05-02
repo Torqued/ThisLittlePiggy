@@ -65,7 +65,7 @@ public class AIMovement : MonoBehaviour
 				}
 
 				// check if wolf is attacking house, if so then don't run pathfinding code
-				if (attackingHouse ) {
+				if (attackingHouse) {
 
 					if (!boss) attackState();
 					if (Time.time % attackInterval == 0) {
@@ -83,6 +83,7 @@ public class AIMovement : MonoBehaviour
 							}
 							else {
 								house.DamageHouse(0);
+								path.player.gameObject.GetComponent<CharacterControls>().unlockMouse();
 								Application.LoadLevel("End");
 							}
 
@@ -93,14 +94,64 @@ public class AIMovement : MonoBehaviour
 					}
 					return;
 				}
+				
+		// rotate towards next path point
+		//find the vector pointing from our position to the target
+		_direction = (path.player.position - transform.position).normalized;
+		
+		
+		//if (_direction == Vector3.zero)
+		//    ;
+		//else {
+		//create the rotation we need to be in to look at the target
+		_lookRotation = Quaternion.LookRotation(_direction);
+		_lookRotation.x =transform.rotation.x;
+		_lookRotation.z =transform.rotation.z;
+		
+		//rotation over time according to speed until we are in the required rotation
+		transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+		//}
+		
+		//return;
+		//}
+		//else { 
+		//	if (!boss) chaseState();
+		
+		//}
+		
+		
+		path.stop = false;
+		
+		
+		// actual rotation and translation code 
+		//if (targetPosition != Vector3.zero) {
+		
+		// rotate towards next path point
+		//find the vector pointing from our position to the target
+		_direction = (targetPosition - transform.position).normalized;
+		
+		
+		//if (_direction == Vector3.zero)
+		//	;
+		//else {
+		//create the rotation we need to be in to look at the target
+		_lookRotation = Quaternion.LookRotation(_direction);
+		_lookRotation.x =transform.rotation.x;
+		_lookRotation.z =transform.rotation.z;
+		//rotation over time according to speed until we are in the required rotation
+		transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
+		Vector3 change = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime) - transform.position;
+		transform.position += new Vector3(change.x,0,change.z);
+		//}
+		//}
 
 				// if pig inside house, then increase the distance from the pig at which the wolf stops
 				if (path.player.gameObject.GetComponent<CharacterControls>().getResting()) {
 								if (!boss) stopRange = 5.0f;
-								else stopRange = 5.0f;
+								else stopRange = 10.0f;
 				}
 				else {
-					if (!boss) stopRange = 5.0f;
+					if (!boss) stopRange = 10.0f;
 					else stopRange = 5.0f;
 				}
 
@@ -124,53 +175,12 @@ public class AIMovement : MonoBehaviour
 						
 						}
 
-						
-						// rotate towards next path point
-						//find the vector pointing from our position to the target
-					    _direction = (path.player.position - transform.position).normalized;
-					 
-					       
-					    if (_direction == Vector3.zero)
-					        ;
-					    else {
-					        //create the rotation we need to be in to look at the target
-					        _lookRotation = Quaternion.LookRotation(_direction);
-					 
-						    //rotation over time according to speed until we are in the required rotation
-						    model.rotation = Quaternion.Slerp(model.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
-						}
-					
-						return;
 				}
 				else { 
 					if (!boss) chaseState();
 
-				}
-
-
-				path.stop = false;
-
-
-				// actual rotation and translation code 
-				if (targetPosition != Vector3.zero) {
+				}	
 						
-					// rotate towards next path point
-					//find the vector pointing from our position to the target
-			        _direction = (targetPosition - transform.position).normalized;
-			 
-			       
-			        if (_direction == Vector3.zero)
-			        	;
-			        else {
-			        	 //create the rotation we need to be in to look at the target
-			        	_lookRotation = Quaternion.LookRotation(_direction);
-			 
-				        //rotation over time according to speed until we are in the required rotation
-				        model.rotation = Quaternion.Slerp(model.rotation, _lookRotation, Time.deltaTime * RotationSpeed);
-				    }
-						
-				}
-				transform.position = Vector3.MoveTowards (transform.position, targetPosition, speed * Time.deltaTime);
 
 		}
 
@@ -189,6 +199,14 @@ public class AIMovement : MonoBehaviour
 				if (!path.player.gameObject.GetComponent<CharacterControls>().getResting())
 					attackingHouse = false;
 				Debug.Log("gets here2");
+			}
+		}
+
+		void OnCollisionEnter(Collision other){
+			if (other.gameObject.tag == "House") {
+				attackingHouse = true;
+				house = other.gameObject.GetComponent<House>();
+				Debug.Log("gets here");
 			}
 		}
 

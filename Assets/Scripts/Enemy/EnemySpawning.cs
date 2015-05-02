@@ -79,8 +79,10 @@ public class EnemySpawning : MonoBehaviour {
 		else {
 			int current_index = 0; 
 			foreach (GameObject wolf in wolves) {
-				wolf.GetComponent<AIPath> ().Flee(spawnPoints[current_index]);
-				current_index ++;
+				if(wolf){
+					wolf.GetComponent<AIPath> ().Flee(spawnPoints[current_index]);
+					current_index ++;
+				}
 			}
 		}
 	}

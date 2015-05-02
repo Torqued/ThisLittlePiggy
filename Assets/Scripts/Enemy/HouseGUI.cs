@@ -25,7 +25,7 @@ public class HouseGUI : MonoBehaviour {
 
 	public void EnableGUI() {
 		this.GetComponent<Renderer>().enabled = true;
-		emptyBar.GetComponent<Renderer>().enabled = true;
+		//emptyBar.GetComponent<Renderer>().enabled = true;
 		fullBar.GetComponent<Renderer>().enabled = true;
 		text.GetComponent<Renderer>().enabled = true;
 		snoring.Play();
@@ -33,7 +33,7 @@ public class HouseGUI : MonoBehaviour {
 
 	public void DisableGUI() {
 		this.GetComponent<Renderer>().enabled = false;
-		emptyBar.GetComponent<Renderer>().enabled = false;
+		//emptyBar.GetComponent<Renderer>().enabled = false;
 		fullBar.GetComponent<Renderer>().enabled = false;
 		text.GetComponent<Renderer>().enabled = false;
 		snoring.Stop();
@@ -43,7 +43,8 @@ public class HouseGUI : MonoBehaviour {
 		attacked = true;
 		this.GetComponent<Renderer>().material.color = new Vector4(this.GetComponent<Renderer>().material.color.r, 
 			this.GetComponent<Renderer>().material.color.g, this.GetComponent<Renderer>().material.color.b, 0.5f);
-		snoring.Stop();
+		text.GetComponent<Renderer>().enabled = false;
+		//snoring.Stop();
 	}
 
 	public void updateHealth(int currentHealth, int maxHealth) {
